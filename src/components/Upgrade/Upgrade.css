@@ -1,0 +1,145 @@
+.Upgrade {
+    height: 390px;
+    width: 100%;
+    /* overflow-x: hidden; */
+}
+
+.Upgrade button {
+    border-radius: 0;
+    outline: 0;
+    /* font-weight: bold; */
+}
+
+/* .Upgrade button:focus{
+    background-color: #E67732;
+} */
+.Upgrade button:active {
+    animation: anim-effect-buy 0.1s forwards;
+}
+
+@keyframes anim-effect-buy {
+    0% {
+        transform: scale3d(0.9, 0.9, 1);
+    }
+
+    25%,
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+.Upgrade button{
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.Upgrade button>div {
+    width: 100%;
+    font-size: 16px;
+}
+
+#upgrade_list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    /* flex-wrap: wrap; */
+    /* align-items: center; */
+    justify-content: left;
+    overflow-y: hidden;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+}
+#upgrade_list::-webkit-scrollbar { width: 0; }
+
+.name_upgrade {
+    height: 122px;
+    width: 122px;
+    font-size: 20px;
+    background-color: #A38D8A;
+    border: 3.3px solid black;
+}
+
+.info_upgrade {
+    height: 122px;
+    width: 100%;
+    font-size: 20px;
+    background-color: #A38D8A;
+    border: 3.3px solid black;
+    text-align: left;
+    padding: 5px;
+    position: relative;
+}
+
+.upgrade_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+}
+
+.upgrade_item>* {
+    margin: 5px 5px 4px 5px;
+}
+
+.buy {
+    background-color: gray;
+}
+
+.description_update{
+    font-size: 16px;
+    border-bottom: 1px solid black;
+}
+
+.price_upgrade{
+    text-align: right !important;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+/* .buy :active {
+    animation: anim-effect-notbuy 0.1s forwards;
+}
+
+@keyframes anim-effect-notbuy {
+    0% {
+        background-color: red;
+    }
+
+    100% {
+        background-color: #BF632A;
+    }
+} */
+
+.autoclick {
+    background-position: 14px 15px;
+    background-size: 94px 66px;
+    background-image: url('../../img/work/autoclick.png');
+    background-repeat: no-repeat;
+}
+
+.BP{
+    background-position: 10px 12px ;
+    background-size: 94px 66px;
+    background-image: url('../../img/work/bp.png');
+    background-repeat: no-repeat;
+}
+
+.FP{
+    background-position: top;
+    background-size: 94px 66px;
+    background-image: url('../../img/work/mesto.png');
+    background-repeat: no-repeat;
+}
+
+.Cooler{
+    background-position: top;
+    background-size: 94px 66px;
+    background-image: url('../../img/work/fan.png');
+    background-repeat: no-repeat;
+}
