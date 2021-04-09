@@ -21,6 +21,7 @@ const Shop = ({ buy_click, library_VC }) => {
     GT750: gt750_notwork,
     GT760: gt760_notwork,
   }
+  
 
     const element = library_VC.map((item, i) => {
         const {text, price, voltage, plus, temp} = item;
