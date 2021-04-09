@@ -107,8 +107,8 @@ export default class App extends PureComponent {
     ],
     frame: [
       { nameF: "Click" },
-      // { nameF: "Shop" },
-      // { nameF: "Upgrade" }
+      { nameF: "Shop" },
+      { nameF: "Upgrade" }
     ],
     activeFrame: { name: "Click" },
     curtain: false
