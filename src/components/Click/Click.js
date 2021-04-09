@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet, Text, View, ScrollView, Button, Image, TouchableOpacity, Alert} from 'react-native';
-
+import { StyleSheet, Text, View, ScrollView, Button, Image, TouchableOpacity, Alert, Pressable } from 'react-native';
 // Видеокарты
 import gt730_notwork from '../../img/Nofancard_notwork.png';
 import gt730_work from '../../img/Nofancard_work.gif';
@@ -18,8 +17,8 @@ import VC_off_img from '../../img/switch1_off.png';
 
 
 const click = (
-  { masClick, onClick, money, sell_click, auto_click, up_voltage, voltage_VC, max_voltage_VC, onAlert, turn_on_off_VC}
-  ) => {
+  { masClick, onClick, money, sell_click, auto_click, up_voltage, voltage_VC, max_voltage_VC, onAlert, turn_on_off_VC }
+) => {
   const mas_VC =
   {
     GT730_notwork: gt730_notwork,
@@ -29,10 +28,11 @@ const click = (
     GT760_notwork: gt760_notwork,
     GT760_work: gt760_work,
   }
+
   const element = masClick.map((item, i) => {
-    const { time_1_percent, text, id, plus, voltage, working, coif_volt, temp} = item;
+    const { time_1_percent, text, id, plus, voltage, working, coif_volt, temp } = item;
     const notwork = mas_VC[`${text}_notwork`];
-    const work = mas_VC[`${text}_work`]
+    const work = mas_VC[`${text}_work`];
 
     return (
       <View style={styles.Click} key={`${text}_${id}`}>
@@ -70,7 +70,7 @@ const click = (
 
 class Click extends PureComponent {
 
-  constructor(props){
+  constructor(props) {
     super(props)
     this.time_auto_click = 0;
     this.time_interval_cooldown = 0;
@@ -85,21 +85,21 @@ class Click extends PureComponent {
     this.auto_click();
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearInterval(this.time_auto_click)
     clearTimeout(this.time_interval_cooldown)
   }
 
 
   turn_VC = () => {
-    const {voltage, working, index, coif_volt, temp} = this.props
-    if(this.VC_on){
+    const { voltage, working, index, coif_volt, temp } = this.props
+    if (this.VC_on) {
       this.VC_on = false;
       clearInterval(this.time_auto_click)
       clearTimeout(this.time_interval_cooldown)
       this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp)
     }
-    else{
+    else {
       this.VC_on = true;
       this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp)
     }
@@ -115,25 +115,25 @@ class Click extends PureComponent {
   }
 
   click = () => {
-    const{voltage_VC, max_voltage_VC, plus, voltage} = this.props;
+    const { voltage_VC, max_voltage_VC, plus, voltage } = this.props;
 
     if (!this.props.working && voltage_VC + voltage <= max_voltage_VC && this.VC_on) {
       this.start_cooldown(plus, voltage)
     }
-    else if(voltage_VC + voltage > max_voltage_VC){
+    else if (voltage_VC + voltage > max_voltage_VC) {
       this.props.onAlert('БП не потянет')
     }
     console.log('Нажата клик')
   }
   start_cooldown = (plus, voltage) => {
-    const { time_1_percent, working, index, coif_volt, temp} = this.props;
+    const { time_1_percent, working, index, coif_volt, temp } = this.props;
     this.props.up_voltage(voltage, working, index, 1, temp);
     this.time_interval_cooldown = setInterval(() => this.plus_cooldown(plus, voltage), time_1_percent * 10)
   }
 
   plus_cooldown = (plus, voltage) => {
     const { cooldown } = this.state;
-    const { working, index, coif_volt, temp} = this.props
+    const { working, index, coif_volt, temp } = this.props
     if (cooldown !== 100) {
       this.setState({
         cooldown: cooldown + 1
@@ -152,7 +152,7 @@ class Click extends PureComponent {
 
   sell = (question) => {
     if (question) {
-      const { sell_click, index} = this.props;
+      const { sell_click, index } = this.props;
       clearTimeout(this.time_auto_click);
       clearInterval(this.time_interval_cooldown);
       sell_click(index, this.props.working)
@@ -175,13 +175,13 @@ class Click extends PureComponent {
 
   render() {
 
-    const { cooldown} = this.state;
-    const { time_1_percent, text, plus, notwork_img, work_img, voltage, working} = this.props
+    const { cooldown } = this.state;
+    const { time_1_percent, text, plus, notwork_img, work_img, voltage, working } = this.props
     let img, img_on;
     if (!working) { img = notwork_img; }
     else { img = work_img }
-    if(this.VC_on) {img_on = VC_on_img}
-    else {img_on = VC_off_img}
+    if (this.VC_on) { img_on = VC_on_img }
+    else { img_on = VC_off_img }
     return (
       <>
         <View style={styles.InfoClick}>
@@ -190,15 +190,22 @@ class Click extends PureComponent {
             <View><Text style={styles.TimeCooldown}>{(time_1_percent - cooldown * time_1_percent / 100).toFixed(2)} сек</Text></View>
           </View>
         </View>
-        <TouchableOpacity style={styles.ImgVC} onPress={this.click}><Image style={styles.ImgVCImage} source={img} alt={'logo'}></Image></TouchableOpacity>
+        <Pressable style={styles.ImgVC_TO} onPress={this.click}>
+          <Image style={styles.ImgVCImage} source={img}></Image>
+        </Pressable>
         <View style={styles.SellOn}>
-          <TouchableOpacity style={styles.SellClick} onPress={this.sellQuestion}><Text>Sell</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.ImgOn} onPress={() => { this.turn_VC(plus, voltage) }}><Image style={styles.ImgOnImage} source={img_on} alt={'logo'}></Image></TouchableOpacity>
+          <Pressable activeOpacity={1} style={styles.SellClick_TO} onPress={this.sellQuestion}>
+            <Text>Sell</Text>
+          </Pressable>
+          <Pressable activeOpacity={1} style={styles.ImgOn_TO} onPress={() => { this.turn_VC(plus, voltage) }}>
+            <Image style={styles.ImgOnImage} source={img_on}></Image>
+          </Pressable>
         </View>
       </>
     )
   }
 }
+
 
 const styles = StyleSheet.create({
   ListClick: {
@@ -254,13 +261,13 @@ const styles = StyleSheet.create({
     // width: "max-content",
     fontSize: 11
   },
-  ImgVC: {
+  ImgVC_TO: {
     width: 115,
     height: 52,
     backgroundColor: "#67605E",
     borderColor: "black",
     borderLeftWidth: 3.3,
-    borderRightWidth: 3.3
+    borderRightWidth: 3.3,
   },
   ImgVCImage: {
     position: "relative",
@@ -278,7 +285,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
     borderWidth: 3.3
   },
-  SellClick: {
+  SellClick_TO: {
     fontSize: 16,
     width: 30,
     height: 20,
@@ -288,7 +295,7 @@ const styles = StyleSheet.create({
     alignContent: "center"
 
   },
-  ImgOn: {
+  ImgOn_TO: {
     marginTop: 5,
   },
   ImgOnImage: {

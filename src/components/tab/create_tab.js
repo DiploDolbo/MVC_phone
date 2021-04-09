@@ -16,7 +16,7 @@ const CreateTab = ({ tab, onSwitch, activeFrame, curtain, switch_curtain }) => {
                 clas = [styles.TabWp]
             }
             return (
-                <TouchableOpacity key={full_name} style={clas} onClick={() => onSwitch(nameWP, i)}>
+                <TouchableOpacity key={full_name} style={clas} onPress={() => onSwitch(nameWP, i)}>
                     <Text>{text ? text : 'Tab'}</Text>
                 </TouchableOpacity>
             )
@@ -37,7 +37,7 @@ const CreateTab = ({ tab, onSwitch, activeFrame, curtain, switch_curtain }) => {
                     clas = [styles.TabWp]
                 }
                 return (
-                    <TouchableOpacity key={full_name} style={clas} onClick={() => onSwitch(nameWP, i)}>
+                    <TouchableOpacity key={full_name} style={clas} onPress={() => onSwitch(nameWP, i)}>
                         <Text>{text ? text : 'Tab'}</Text>
                     </TouchableOpacity>
                 )
@@ -50,7 +50,7 @@ const CreateTab = ({ tab, onSwitch, activeFrame, curtain, switch_curtain }) => {
         <>
             <View style={styles.elements_1}>{elements_1}</View>
             <View>{elements_2}</View>
-            <TouchableOpacity style={style} onClick={switch_curtain}><Text>☰</Text></TouchableOpacity>
+            <TouchableOpacity style={style} onPress={switch_curtain}><Text>☰</Text></TouchableOpacity>
         </>
     )
 }
@@ -82,11 +82,12 @@ const styles = StyleSheet.create({
         borderWidth: 3.3,
         borderTopWidth: 0,
         borderColor: "black",
-        zIndex: 1,
-        alignItems: "center"
+        alignItems: "center",
+        zIndex: 1
     },
     ActiveCurtain: {
         backgroundColor: "#B7A7A1"
+
     }
 
 })

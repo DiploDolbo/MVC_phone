@@ -25,6 +25,16 @@ import Frame from './src/components/tab/create_frame';
 //   );
 // }
 
+// import gt730_notwork from ;
+// import gt730_work from ;
+// import gt750_notwork from ;
+// import gt750_work from ;
+// import gt760_notwork from ;
+// import gt760_work from ;
+
+// import VC_on_img from ;
+// import VC_off_img from '../../img/switch1_off.png';
+
 
 export default class App extends PureComponent {
 
