@@ -2,7 +2,7 @@
   "expo": {
     "name": "MVC_phone",
     "slug": "MVC_phone",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/MinerVideoCard_icon.png",
     "splash": {
@@ -21,12 +21,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/MinerVideoCard_icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.drunkhead.mvc"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/MinerVideoCard_icon.png"
     },
     "description": ""
   }

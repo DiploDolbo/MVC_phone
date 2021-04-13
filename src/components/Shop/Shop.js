@@ -40,7 +40,7 @@ const Shop = ({ buy_click, library_VC }) => {
                     <Text style={styles.TextInfo}>Доход: {plus}</Text>
                     <Text style={styles.TextInfo}>Ватт: {voltage}</Text>
                     <Text style={styles.TextInfo}>Жарит: {temp} С°</Text>
-                    <Text style={styles.PriceShop}>Стоит: {price}</Text>
+                    <Text style={styles.PriceShop}>Стоит: {price}$</Text>
                 </View>
 
             </View>
@@ -80,7 +80,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        marginHorizontal: 10,
         marginBottom: 5
     },
     TextInfo: {
@@ -93,7 +92,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#A38D8A",
         borderColor: "black",
         borderWidth: 3.3,
-        width: 267,
+        width: "65%",
         height: 122,
         padding: 5,
         position: "relative"

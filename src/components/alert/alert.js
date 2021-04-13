@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
-
-import "./alert.css";
+import { StyleSheet, Text, View} from 'react-native';
 
 const Alert = ({ activeAlert, closeAlert }) => {
     let element = null;
@@ -13,9 +12,9 @@ const Alert = ({ activeAlert, closeAlert }) => {
         
     }
     return (
-        <div id="alert_Cont">
+        <View style={styles.AlertCont}>
             {element}
-        </div>
+        </View>
     )
 }
 
@@ -33,12 +32,33 @@ class Al extends PureComponent {
     render() {
         const { text, id} = this.props;
         return (
-            <div id={`alert_win_${id}`} className='alert_win'>
-                <span id={`alert_text_${id}`} className='alert_text'>{`${text}`}</span>
+            <View style={styles.AlertWin}>
+                <Text id={`alert_text_${id}`} className='alert_text'>{`${text}`}</Text>
                 {/* <div className = 'close_alert' onClick = {() => {closeAlert(id)}}>X</div> */}
-            </div>
+            </View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    AlertCont:{
+        position: "absolute",
+        marginHorizontal: "25%",
+        zIndex: 10
+    },
+    AlertWin:{
+        minWidth: 200,
+        minHeight: 50,
+        borderColor: "black",
+        borderWidth: 3.3,
+        borderRadius: 0.1,
+        margin: 0,
+        flexDirection: "column",
+        backgroundColor: "white",
+        textAlign: "center",
+        alignItems: "center",
+        justifyContent: "center"
+    }
+})
 
 export default Alert;

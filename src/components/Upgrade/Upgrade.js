@@ -91,12 +91,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        marginHorizontal: 10,
         marginBottom: 5
     },
     InfoUpgrade: {
         height: 122,
-        width: 267,
+        width: "65%",
         fontSize: 20,
         backgroundColor: "#A38D8A",
         borderWidth: 3.3,

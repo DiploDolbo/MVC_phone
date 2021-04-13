@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet, Text, View, ScrollView, Button, Image, TouchableOpacity, Alert, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, Pressable } from 'react-native';
 // Видеокарты
 import gt730_notwork from '../../img/Nofancard_notwork.png';
 import gt730_work from '../../img/Nofancard_work.gif';
@@ -123,7 +123,6 @@ class Click extends PureComponent {
     else if (voltage_VC + voltage > max_voltage_VC) {
       this.props.onAlert('БП не потянет')
     }
-    console.log('Нажата клик')
   }
   start_cooldown = (plus, voltage) => {
     const { time_1_percent, working, index, coif_volt, temp } = this.props;
@@ -209,7 +208,7 @@ class Click extends PureComponent {
 
 const styles = StyleSheet.create({
   ListClick: {
-    height: 390,
+    height: 400,
     width: "100%"
   },
   List: {
@@ -218,20 +217,20 @@ const styles = StyleSheet.create({
     maxHeight: "100%",
     width: "100%",
     flexDirection: "row",
-    flexWrap: "wrap"
+    justifyContent: "flex-start",
+    flexWrap: "wrap",
   },
   Click: {
     flexDirection: "column",
     alignItems: "center",
-    width: 127,
+    width: 120,
     height: 128,
     marginTop: 0,
     marginBottom: 2,
-    marginHorizontal: 5
   },
   InfoClick: {
     height: 46,
-    width: 127,
+    width: 120,
     borderWidth: 3.3,
     borderColor: "black",
     backgroundColor: "#A38D8A",
@@ -280,7 +279,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#A38D8A",
-    width: 127,
+    width: 120,
     height: 26,
     borderColor: "black",
     borderWidth: 3.3

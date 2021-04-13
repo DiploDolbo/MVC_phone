@@ -1,39 +1,11 @@
+// import * as Updates from "expo-updates";
 import { StatusBar } from 'expo-status-bar';
-import React, {PureComponent, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, Button, View, ScrollView, FlatList } from 'react-native';
+import React, {PureComponent } from 'react';
+import { StyleSheet, Text, View} from 'react-native';
 
+import Alert from './src/components/alert/alert'
 import Tab from './src/components/tab/create_tab';
 import Frame from './src/components/tab/create_frame';
-
-// import NavigationBar from 'react-native-navigation-bar';
-
-// const App = () => {
-//   const [count, setCount] = useState(0);
-//   return (
-//     <View style={styles.main}>
-//       {/* <LostGreatings style={[{top: 50}]} count={count}/> */}
-//       <Text>You clicked {count} times</Text>
-//       <TouchableOpacity
-//         style={styles.button} 
-//         onPress={() => setCount(count + 1)} 
-//       >
-//         <Text>Click</Text>
-//       </TouchableOpacity>
-//       <StatusBar hidden={true} style="auto" />
-//       {/* <NavigationBar hidden={true}/> */}
-//     </View>
-//   );
-// }
-
-// import gt730_notwork from ;
-// import gt730_work from ;
-// import gt750_notwork from ;
-// import gt750_work from ;
-// import gt760_notwork from ;
-// import gt760_work from ;
-
-// import VC_on_img from ;
-// import VC_off_img from '../../img/switch1_off.png';
 
 
 export default class App extends PureComponent {
@@ -81,7 +53,7 @@ export default class App extends PureComponent {
   }
 
   state = {
-    money: 300,
+    money: 500,
     spentWatts: 0,
     day: 0,
     count: 0,
@@ -234,9 +206,7 @@ export default class App extends PureComponent {
   up_voltage = (voltage, working, index, coef, temp) => {
     let volt, t, chil = 0, c = 0;
     
-    this.masCooler.map((item) => c += item)
-    if(this.oldChilling < c){chil = this.oldChilling;}
-    else{chil = c}
+    this.masCooler.map((item) => chil += item)
     // const indexClick = this.state.masClick.findIndex((item) => { return item.id === id && item.text === text })
     const fClick = this.state.masClick.slice(0, index);
     const sClick = this.state.masClick.slice(index + 1);
@@ -247,11 +217,12 @@ export default class App extends PureComponent {
       click.working = true;
     }
     else {
+      if(this.oldChilling < chil){chil = this.oldChilling;}
       volt = this.state.voltage_VC - voltage;
       t = this.state.temp_VC - temp * (1 - chil);
       click.working = false;
     }
-    this.oldChilling = c;
+    this.oldChilling = chil;
     this.setState({
       masClick: [...fClick, click, ...sClick],
       voltage_VC: volt,
@@ -383,10 +354,10 @@ export default class App extends PureComponent {
         <View style={styles.AppHeader}>
           <Text style={{fontSize: 30}}>MINER VIDEOCARD</Text>
         </View>
-        {/* <Alert
+        <Alert
           activeAlert={activeAlert}
           closeAlert={this.closeAlert}
-        ></Alert> */}
+        ></Alert>
         <GamePlace
           masClick={masClick}
           money={money}
