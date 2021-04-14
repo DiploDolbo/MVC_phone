@@ -20,9 +20,12 @@ export default class App extends PureComponent {
     this.oldChilling = 0;
     this.library_VC =
       [
+        { time_1_percent: 2.4, text: 'ATI4600', plus: 1, price: 30, voltage: 20, coif_volt: 0.5, temp: 10 },
         { time_1_percent: 2.4, text: 'GT730', plus: 2, price: 50, voltage: 30, coif_volt: 0.5, temp: 15 },
         { time_1_percent: 2.4, text: 'GT750', plus: 3, price: 80, voltage: 50, coif_volt: 0.5, temp: 20 },
-        { time_1_percent: 2.4, text: 'GT760', plus: 4, price: 160, voltage: 100, coif_volt: 0.5, temp: 25 }
+        { time_1_percent: 2.4, text: 'GT760', plus: 4, price: 160, voltage: 100, coif_volt: 0.5, temp: 25 },
+        { time_1_percent: 2.4, text: 'HP_G6', plus: 3, price: 200, voltage: 60, coif_volt: 0.5, temp: 10 },
+        { time_1_percent: 2.4, text: 'i5_6400', plus: 5, price: 200, voltage: 30, coif_volt: 0.5, temp: 20 },
       ];
     this.upgrade_VC = [
       {

@@ -11,17 +11,23 @@ import {
 } from 'react-native';
 import React from "react";
 
+import ATI4600_notwork from '../../img/red1fancard_notwork.png';
 import gt730_notwork from '../../img/Nofancard_notwork.png';
 import gt750_notwork from '../../img/2fancard_notwork.png';
 import gt760_notwork from '../../img/Watercard_notwork.png';
+import HP_G6_notwork from '../../img/laptop1_notwork.png';
+import i5_6400_notwork from '../../img/cpu1_notwork.png';
 
 const Shop = ({ buy_click, library_VC }) => {
 
     const mas_VC =
     {
+        ATI4600: ATI4600_notwork,
         GT730: gt730_notwork,
         GT750: gt750_notwork,
         GT760: gt760_notwork,
+        HP_G6: HP_G6_notwork,
+        i5_6400: i5_6400_notwork
     }
 
 

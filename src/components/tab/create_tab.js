@@ -49,7 +49,7 @@ const CreateTab = ({ tab, onSwitch, activeFrame, curtain, switch_curtain }) => {
     return (
         <>
             <View style={styles.elements_1}>{elements_1}</View>
-            <View>{elements_2}</View>
+            <View style={styles.elements_1}>{elements_2}</View>
             <TouchableOpacity style={style} onPress={switch_curtain}><Text>☰</Text></TouchableOpacity>
         </>
     )
@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
     },
     elements_1:{
         flexDirection: "row",
-        
     },
     Curtain: {
         width: "100%",

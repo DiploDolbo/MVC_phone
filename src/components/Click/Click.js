@@ -1,12 +1,20 @@
 import React, { PureComponent } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, Pressable } from 'react-native';
 // Видеокарты
+import ATI4600_notwork from '../../img/red1fancard_notwork.png';
+import ATI4600_work from '../../img/red1fancard_work.gif';
 import gt730_notwork from '../../img/Nofancard_notwork.png';
 import gt730_work from '../../img/Nofancard_work.gif';
 import gt750_notwork from '../../img/2fancard_notwork.png';
 import gt750_work from '../../img/2fancard_work.gif';
 import gt760_notwork from '../../img/Watercard_notwork.png';
 import gt760_work from '../../img/Watercard_work.gif';
+//Ноуты
+import HP_G6_notwork from '../../img/laptop1_notwork.png';
+import HP_G6_work from '../../img/laptop1_work.gif';
+//Процессоры
+import i5_6400_notwork from '../../img/cpu1_notwork.png';
+import i5_6400_work from '../../img/cpu1_work.gif';
 
 import VC_on_img from '../../img/switch1_on.png';
 import VC_off_img from '../../img/switch1_off.png';
@@ -21,12 +29,18 @@ const click = (
 ) => {
   const mas_VC =
   {
+    ATI4600_notwork: ATI4600_notwork,
+    ATI4600_work: ATI4600_work,
     GT730_notwork: gt730_notwork,
     GT730_work: gt730_work,
     GT750_notwork: gt750_notwork,
     GT750_work: gt750_work,
     GT760_notwork: gt760_notwork,
     GT760_work: gt760_work,
+    HP_G6_notwork: HP_G6_notwork,
+    HP_G6_work: HP_G6_work,
+    i5_6400_notwork: i5_6400_notwork,
+    i5_6400_work: i5_6400_work
   }
 
   const element = masClick.map((item, i) => {
