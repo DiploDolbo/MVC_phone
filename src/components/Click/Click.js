@@ -173,10 +173,10 @@ class Click extends PureComponent {
 
   sell = (question) => {
     if (question) {
-      const { sell_click, index } = this.props;
+      const { sell_click, index, temp_room} = this.props;
       clearTimeout(this.time_auto_click);
       clearInterval(this.time_interval_cooldown);
-      sell_click(index, this.props.working)
+      sell_click(index, this.props.working, temp_room)
     }
   }
 

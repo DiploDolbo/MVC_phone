@@ -25,20 +25,6 @@ const CreateFrame = ({
         // eslint-disable-next-line default-case
 
         switch (nameF) {
-            case 'Shop':
-                element = <Shop
-                    library_VC={library_VC}
-                    buy_click={buy_click}
-                // onAlert = {onAlert}
-                >
-                </Shop>
-                break;
-            case 'Upgrade':
-                element = <Upgrade
-                    upgrade_VC={upgrade_VC}
-                // onAlert={onAlert}
-                ></Upgrade>
-                break;
             case 'Click':
                 element =
                     <Click
@@ -55,6 +41,20 @@ const CreateFrame = ({
                         temp_VC={temp_VC}
                     >
                     </Click>
+            case 'Shop':
+                element = <Shop
+                    library_VC={library_VC}
+                    buy_click={buy_click}
+                // onAlert = {onAlert}
+                >
+                </Shop>
+                break;
+            case 'Upgrade':
+                element = <Upgrade
+                    upgrade_VC={upgrade_VC}
+                // onAlert={onAlert}
+                ></Upgrade>
+                break;
         }
 
         return (
@@ -79,13 +79,15 @@ const styles = StyleSheet.create({
         position: "absolute",
         zIndex: 0,
         elevation: 0,
-        opacity: 0
+        opacity: 0,
+        display: "none"
     },
     FrameActive: {
         position: "absolute",
         elevation: 10,
         opacity: 1,
-        zIndex: 1
+        zIndex: 1,
+        display: "flex"
     }
 })
 

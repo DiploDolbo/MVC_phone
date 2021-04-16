@@ -207,7 +207,7 @@ export default class App extends PureComponent {
   }
 
   up_voltage = (voltage, working, index, coef, temp, temp_room) => {
-    let volt, t, chil = 0, c = 0;
+    let volt, t, chil = 0;
     
     this.masCooler.map((item) => chil += item)
     // const indexClick = this.state.masClick.findIndex((item) => { return item.id === id && item.text === text })
@@ -266,21 +266,29 @@ export default class App extends PureComponent {
     }
   }
 
-  sell_click = (index, working) => {
+  sell_click = (index, working, temp_room) => {
     const { masClick, money, count_VC, payment, voltage_VC } = this.state;
     // const index = masClick.findIndex((item) => { return item.id === id && item.text === text })
     const newMasClick = [...masClick.slice(0, index), ...masClick.slice(index + 1)]
     const price = masClick[index].price;
     // const pay = (+payment - price * 0.1).toFixed(1);
     let mon = +(+money + price * 0.9).toFixed(1);
-    let volt;
-    if (working) volt = masClick[index].voltage * 2;
-    else volt = masClick[index].voltage;
+    let volt, t, chil = 0;
+    if (working) {
+      volt = masClick[index].voltage * 2;
+      this.masCooler.map((item) => chil += item);
+      t = +((this.state.temp_VC - temp_room * (1 - chil)).toFixed(1));
+    }
+    else {
+      volt = masClick[index].voltage
+      t = this.state.temp_VC;
+    };
     this.setState({
       money: mon,
       masClick: newMasClick,
       count_VC: count_VC - 1,
-      voltage_VC: voltage_VC - volt
+      voltage_VC: voltage_VC - volt,
+      temp_VC: t
     })
   }
 
@@ -293,7 +301,7 @@ export default class App extends PureComponent {
     let click = Object.assign({}, this.state.masClick[index]);
     if (working && !VC_on) {
       volt = this.state.voltage_VC - voltage * 2;
-      t = this.state.temp_VC - temp_room * (1-chil)
+      t = +((this.state.temp_VC - temp_room * (1-chil)).toFixed(1))
       click.working = false;
     }
     else if (!working && !VC_on) {
