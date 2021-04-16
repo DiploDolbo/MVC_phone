@@ -25,7 +25,8 @@ import VC_off_img from '../../img/switch1_off.png';
 
 
 const click = (
-  { masClick, onClick, money, sell_click, auto_click, up_voltage, voltage_VC, max_voltage_VC, onAlert, turn_on_off_VC }
+  { masClick, onClick, money, sell_click, auto_click, up_voltage,
+    voltage_VC, max_voltage_VC, onAlert, turn_on_off_VC, temp_VC }
 ) => {
   const mas_VC =
   {
@@ -44,7 +45,7 @@ const click = (
   }
 
   const element = masClick.map((item, i) => {
-    const { time_1_percent, text, id, plus, voltage, working, coif_volt, temp } = item;
+    const { time_1_percent, text, id, plus, voltage, working, coif_volt, temp, temp_room } = item;
     const notwork = mas_VC[`${text}_notwork`];
     const work = mas_VC[`${text}_work`];
 
@@ -68,6 +69,8 @@ const click = (
           onAlert={onAlert}
           coif_volt={coif_volt}
           temp={temp}
+          temp_room={temp_room}
+          temp_VC={temp_VC}
           turn_on_off_VC={turn_on_off_VC}
         ></Click>
       </View>
@@ -93,6 +96,7 @@ class Click extends PureComponent {
 
   state = {
     cooldown: 0,
+    temperature: 30
   }
 
   componentDidMount() {
@@ -106,19 +110,20 @@ class Click extends PureComponent {
 
 
   turn_VC = () => {
-    const { voltage, working, index, coif_volt, temp } = this.props
+    const { voltage, working, index, coif_volt, temp, temp_room } = this.props
     if (this.VC_on) {
       this.VC_on = false;
       clearInterval(this.time_auto_click)
       clearTimeout(this.time_interval_cooldown)
-      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp)
+      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp, temp_room)
     }
     else {
       this.VC_on = true;
-      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp)
+      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp, temp_room)
     }
     this.setState({
-      cooldown: 0
+      cooldown: 0,
+      temperature: 30
     })
   }
 
@@ -139,26 +144,29 @@ class Click extends PureComponent {
     }
   }
   start_cooldown = (plus, voltage) => {
-    const { time_1_percent, working, index, coif_volt, temp } = this.props;
-    this.props.up_voltage(voltage, working, index, 1, temp);
+    const { time_1_percent, working, index, coif_volt, temp, temp_room } = this.props;
+    this.props.up_voltage(voltage, working, index, 1, temp, temp_room);
     this.time_interval_cooldown = setInterval(() => this.plus_cooldown(plus, voltage), time_1_percent * 10)
   }
 
   plus_cooldown = (plus, voltage) => {
-    const { cooldown } = this.state;
-    const { working, index, coif_volt, temp } = this.props
+    const { cooldown, temperature } = this.state;
+    const { working, index, coif_volt, temp, temp_room, temp_VC } = this.props
+    let t = +((temp + temp_VC).toFixed(1))
     if (cooldown !== 100) {
       this.setState({
-        cooldown: cooldown + 1
+        cooldown: cooldown + 1,
+        temperature: t
       })
     }
     else {
       clearInterval(this.time_interval_cooldown);
-      this.props.onClick(plus);
-      this.props.up_voltage(voltage, working, index, 1, temp);
+      this.props.onClick(plus, temperature);
+      this.props.up_voltage(voltage, working, index, 1, temp, temp_room);
       this.auto_click();
       this.setState({
-        cooldown: 0
+        cooldown: 0,
+        temperature: 30
       })
     }
   }
@@ -188,7 +196,7 @@ class Click extends PureComponent {
 
   render() {
 
-    const { cooldown } = this.state;
+    const { cooldown, temperature } = this.state;
     const { time_1_percent, text, plus, notwork_img, work_img, voltage, working } = this.props
     let img, img_on;
     if (!working) { img = notwork_img; }
@@ -200,7 +208,8 @@ class Click extends PureComponent {
         <View style={styles.InfoClick}>
           <View style={styles.InfoClickText}>
             <View><Text style={styles.NameClick}>{text}</Text></View>
-            <View><Text style={styles.TimeCooldown}>{(time_1_percent - cooldown * time_1_percent / 100).toFixed(2)} сек</Text></View>
+            <View><Text style={styles.TempClick}>{temperature}С°</Text></View>
+            <View><Text style={styles.TimeCooldown}>{(time_1_percent - cooldown * time_1_percent / 100).toFixed(2)} с</Text></View>
           </View>
         </View>
         <Pressable style={styles.ImgVC_TO} onPress={this.click}>
@@ -253,25 +262,35 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   InfoClickText: {
-    width: 93,
-    height: 30,
-    flexDirection: "column",
-    alignItems: "center",
+    width: 90,
+    height: 35,
+    flexDirection: "row",
+    alignItems: "flex-start",
     justifyContent: "center",
+    flexWrap: "wrap",
     position: "relative",
     color: "#112533",
     borderWidth: 3.3,
     borderColor: "black",
-    backgroundColor: "#5484AF"
+    backgroundColor: "#5484AF",
   },
   NameClick: {
     // height: "max-content",
     // width: "max-content",
+    textAlign: "center",
+    width: 80,
     fontSize: 11
   },
   TimeCooldown: {
     // height: "max-content",
     // width: "max-content",
+    textAlign: "center",
+    width: 41,
+    fontSize: 11
+  },
+  TempClick: {
+    textAlign: "center",
+    width: 41,
     fontSize: 11
   },
   ImgVC_TO: {

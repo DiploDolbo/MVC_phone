@@ -32,12 +32,12 @@ const Shop = ({ buy_click, library_VC }) => {
 
 
     const element = library_VC.map((item, i) => {
-        const { text, price, voltage, plus, temp } = item;
+        const { text, price, voltage, plus, temp, temp_room } = item;
         return (
             <View key={`shop_item_${i}`} style={styles.ShopItem}>
                 <View>
                     {/* <button className={`name_upgrade ${name}`} onClick={click}><div>{text}</div></button> */}
-                    <TouchableOpacity activeOpacity={0.9} style={styles.button}  onPress={() => { buy_click({ text: text, price: price, votage: voltage }) }}>
+                    <TouchableOpacity activeOpacity={0.6} style={styles.button}  onPress={() => { buy_click({ text: text, price: price, votage: voltage }) }}>
                         <Image style={styles.Image} source={mas_VC[text]}></Image>
                         <Text style={{ fontSize: 20, textAlign: "center" }}>{text}</Text>
                     </TouchableOpacity>
@@ -45,7 +45,8 @@ const Shop = ({ buy_click, library_VC }) => {
                 <View style={styles.InofShopClick}>
                     <Text style={styles.TextInfo}>Доход: {plus}</Text>
                     <Text style={styles.TextInfo}>Ватт: {voltage}</Text>
-                    <Text style={styles.TextInfo}>Жарит: {temp} С°</Text>
+                    <Text style={styles.TextInfo}>Жарит: {temp+30}С°</Text>
+                    <Text style={styles.TextInfo}>Греет: {temp_room}С°</Text>
                     <Text style={styles.PriceShop}>Стоит: {price}$</Text>
                 </View>
 
