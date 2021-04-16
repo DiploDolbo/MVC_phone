@@ -39,7 +39,7 @@ const Upgrade = ({ upgrade_VC }) => {
         return (
             <View key={`upgrade_${i}`} style={classN}>
                 <View>
-                    <TouchableOpacity style={styles.button} onPress={click}>
+                    <TouchableOpacity activeOpacity={0.6} style={styles.button} onPress={click}>
                         <Image style={styles.Image} source={mas_Upgrade[name]}></Image>
                         <Text style={{fontSize: 16, textAlign: "center" }}>{text}</Text>
                     </TouchableOpacity>
