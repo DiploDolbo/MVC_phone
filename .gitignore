@@ -8,8 +8,8 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-run-android/
-src/components/
+run-android/*
+src/components/*
 .expo-shared
 App.js
 app.json
