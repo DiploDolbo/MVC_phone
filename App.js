@@ -17,15 +17,14 @@ export default class App extends PureComponent {
     this.count_buy_VC = 0;//количество за всё время купленых видюх
     // this.nowork_temp = 0.2;//коэф неработающей VC 
     this.fine_temp = 4;//коэф за перегрев
-    this.oldChilling = 0;
     this.library_VC =
       [
-        { time_1_percent: 2.4, text: 'ATI4600', plus: 1, price: 30, voltage: 20, coif_volt: 0.5, temp: 40, temp_room: 4 },
-        { time_1_percent: 2.4, text: 'GT730', plus: 2, price: 50, voltage: 30, coif_volt: 0.5, temp: 40, temp_room: 4 },
-        { time_1_percent: 2.4, text: 'GT750', plus: 3, price: 80, voltage: 50, coif_volt: 0.5, temp: 35, temp_room: 3 },
-        { time_1_percent: 2.4, text: 'GT760', plus: 4, price: 160, voltage: 100, coif_volt: 0.5, temp: 35, temp_room: 3 },
-        { time_1_percent: 2.4, text: 'HP_G6', plus: 3, price: 200, voltage: 60, coif_volt: 0.5, temp: 20, temp_room: 2 },
-        { time_1_percent: 2.4, text: 'i5_6400', plus: 5, price: 200, voltage: 30, coif_volt: 0.5, temp: 20, temp_room: 2 },
+        { time_1_percent: 2.4, text: 'ATI4600', plus: 1, price: 30, voltage: 20, coif_volt: 0.5, temp: 40, temp_room: 4, oldChil: 0},
+        { time_1_percent: 2.4, text: 'GT730', plus: 2, price: 50, voltage: 30, coif_volt: 0.5, temp: 40, temp_room: 4, oldChil: 0 },
+        { time_1_percent: 2.4, text: 'GT750', plus: 3, price: 80, voltage: 50, coif_volt: 0.5, temp: 35, temp_room: 3, oldChil: 0 },
+        { time_1_percent: 2.4, text: 'GT760', plus: 4, price: 160, voltage: 100, coif_volt: 0.5, temp: 35, temp_room: 3, oldChil: 0 },
+        { time_1_percent: 2.4, text: 'HP_G6', plus: 3, price: 200, voltage: 60, coif_volt: 0.5, temp: 20, temp_room: 2, oldChil: 0 },
+        { time_1_percent: 2.4, text: 'i5_6400', plus: 5, price: 200, voltage: 30, coif_volt: 0.5, temp: 20, temp_room: 2, oldChil: 0 },
       ];
     this.upgrade_VC = [
       {
@@ -56,7 +55,7 @@ export default class App extends PureComponent {
   }
 
   state = {
-    money: 500,
+    money: 5000,
     spentWatts: 0,
     day: 0,
     count: 0,
@@ -169,7 +168,7 @@ export default class App extends PureComponent {
 
   plus_chilling = (count, price) => {
     const { money, voltage_VC, count_Cooler, max_count_Cooler} = this.state;
-    if (money >= price && count_Cooler <= max_count_Cooler) {
+    if (money >= price && count_Cooler < max_count_Cooler) {
       let mon = (+money - price).toFixed(1);
       this.masCooler.push(count / 100);
       this.setState({
@@ -206,7 +205,7 @@ export default class App extends PureComponent {
 
   }
 
-  up_voltage = (voltage, working, index, coef, temp, temp_room) => {
+  up_voltage = (voltage, working, index, coef, temp, temp_room, oldChil) => {
     let volt, t, chil = 0;
     
     this.masCooler.map((item) => chil += item)
@@ -220,12 +219,12 @@ export default class App extends PureComponent {
       click.working = true;
     }
     else {
-      if(this.oldChilling < chil){chil = this.oldChilling;}
+      if(oldChil < chil){chil = oldChil;}
       volt = this.state.voltage_VC - voltage;
       t = +((this.state.temp_VC - temp_room * (1 - chil)).toFixed(1));
       click.working = false;
     }
-    this.oldChilling = chil;
+    click.oldChil = chil;
     this.setState({
       masClick: [...fClick, click, ...sClick],
       voltage_VC: volt,
@@ -292,7 +291,7 @@ export default class App extends PureComponent {
     })
   }
 
-  turn_on_off_VC = (voltage, working, index, VC_on, coif_volt, temp, temp_room) => {
+  turn_on_off_VC = (voltage, working, index, VC_on, coif_volt, temp, temp_room, oldChil) => {
     let volt, t = this.state.temp_VC, chil = 0;
     // const indexClick = this.state.masClick.findIndex((item) => { return item.id === id && item.text === text })
     this.masCooler.map((item) => chil += item)
@@ -300,18 +299,22 @@ export default class App extends PureComponent {
     const sClick = this.state.masClick.slice(index + 1);
     let click = Object.assign({}, this.state.masClick[index]);
     if (working && !VC_on) {
+      if(oldChil < chil){
+        chil = oldChil;
+      }
       volt = this.state.voltage_VC - voltage * 2;
       t = +((this.state.temp_VC - temp_room * (1-chil)).toFixed(1))
-      click.working = false;
+      
     }
     else if (!working && !VC_on) {
       volt = this.state.voltage_VC - voltage;
-      click.working = false;
     }
     else if (VC_on) {
       volt = this.state.voltage_VC + voltage;
-      click.working = false;
     }
+    click.working = false;
+    click.oldChil = chil;
+
     this.setState({
       masClick: [...fClick, click, ...sClick],
       voltage_VC: volt,

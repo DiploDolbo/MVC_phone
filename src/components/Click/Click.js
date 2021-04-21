@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, Pressable } from 'react-native';
+import { StyleSheet, Text, ScrollView, View, Image, TouchableOpacity, Alert, Pressable } from 'react-native';
 // Видеокарты
 import ATI4600_notwork from '../../img/red1fancard_notwork.png';
 import ATI4600_work from '../../img/red1fancard_work.gif';
@@ -45,7 +45,7 @@ const click = (
   }
 
   const element = masClick.map((item, i) => {
-    const { time_1_percent, text, id, plus, voltage, working, coif_volt, temp, temp_room } = item;
+    const { time_1_percent, text, id, plus, voltage, working, coif_volt, temp, temp_room, oldChil} = item;
     const notwork = mas_VC[`${text}_notwork`];
     const work = mas_VC[`${text}_work`];
 
@@ -70,6 +70,7 @@ const click = (
           coif_volt={coif_volt}
           temp={temp}
           temp_room={temp_room}
+          oldChil={oldChil}
           temp_VC={temp_VC}
           turn_on_off_VC={turn_on_off_VC}
         ></Click>
@@ -77,11 +78,11 @@ const click = (
     )
   })
   return (
-    <View style={styles.ListClick}>
+    <ScrollView style={styles.ListClick}>
       <View style={styles.List}>
         {element}
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
@@ -110,16 +111,16 @@ class Click extends PureComponent {
 
 
   turn_VC = () => {
-    const { voltage, working, index, coif_volt, temp, temp_room } = this.props
+    const { voltage, working, index, coif_volt, temp, temp_room, oldChil} = this.props
     if (this.VC_on) {
       this.VC_on = false;
       clearInterval(this.time_auto_click)
       clearTimeout(this.time_interval_cooldown)
-      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp, temp_room)
+      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp, temp_room, oldChil)
     }
     else {
       this.VC_on = true;
-      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp, temp_room)
+      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp, temp_room, oldChil)
     }
     this.setState({
       cooldown: 0,
@@ -144,14 +145,14 @@ class Click extends PureComponent {
     }
   }
   start_cooldown = (plus, voltage) => {
-    const { time_1_percent, working, index, coif_volt, temp, temp_room } = this.props;
-    this.props.up_voltage(voltage, working, index, 1, temp, temp_room);
+    const { time_1_percent, working, index, coif_volt, temp, temp_room, oldChil } = this.props;
+    this.props.up_voltage(voltage, working, index, 1, temp, temp_room, oldChil);
     this.time_interval_cooldown = setInterval(() => this.plus_cooldown(plus, voltage), time_1_percent * 10)
   }
 
   plus_cooldown = (plus, voltage) => {
     const { cooldown, temperature } = this.state;
-    const { working, index, coif_volt, temp, temp_room, temp_VC } = this.props
+    const { working, index, coif_volt, temp, temp_room, temp_VC, oldChil } = this.props
     let t = +((temp + temp_VC).toFixed(1))
     if (cooldown !== 100) {
       this.setState({
@@ -162,7 +163,7 @@ class Click extends PureComponent {
     else {
       clearInterval(this.time_interval_cooldown);
       this.props.onClick(plus, temperature);
-      this.props.up_voltage(voltage, working, index, 1, temp, temp_room);
+      this.props.up_voltage(voltage, working, index, 1, temp, temp_room, oldChil);
       this.auto_click();
       this.setState({
         cooldown: 0,
@@ -232,11 +233,10 @@ class Click extends PureComponent {
 const styles = StyleSheet.create({
   ListClick: {
     height: 400,
-    width: "100%"
+    width: "100%",
+    marginTop: 20,
   },
   List: {
-    marginTop: 20,
-    // height: "max-content",
     maxHeight: "100%",
     width: "100%",
     flexDirection: "row",
