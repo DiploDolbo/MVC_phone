@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet, Text, ScrollView, View, Image, TouchableOpacity, Alert, Pressable } from 'react-native';
+import { StyleSheet, Text, ScrollView, View, Image, Alert, Pressable } from 'react-native';
 // Видеокарты
 import ATI4600_notwork from '../../img/red1fancard_notwork.png';
 import ATI4600_work from '../../img/red1fancard_work.gif';
@@ -45,37 +45,41 @@ const click = (
   }
 
   const element = masClick.map((item, i) => {
-    const { time_1_percent, text, id, plus, voltage, working, coif_volt, temp, temp_room, oldChil} = item;
-    const notwork = mas_VC[`${text}_notwork`];
-    const work = mas_VC[`${text}_work`];
+    if (item.text == 'empty') {return (<View key={`empty_click_${i}`} style={styles.Empty}></View>)}
+    else {
+      const { time_1_percent, text, id, plus, voltage, working, coif_volt, temp, temp_room, oldChil } = item;
+      const notwork = mas_VC[`${text}_notwork`];
+      const work = mas_VC[`${text}_work`];
 
-    return (
-      <View style={styles.Click} key={`${text}_${id}`}>
-        <Click
-          time_1_percent={time_1_percent}
-          text={text}
-          onClick={onClick}
-          plus={plus}
-          sell_click={sell_click}
-          index={i}
-          auto_click={auto_click}
-          notwork_img={notwork}
-          work_img={work}
-          voltage={voltage}
-          up_voltage={up_voltage}
-          working={working}
-          voltage_VC={voltage_VC}
-          max_voltage_VC={max_voltage_VC}
-          onAlert={onAlert}
-          coif_volt={coif_volt}
-          temp={temp}
-          temp_room={temp_room}
-          oldChil={oldChil}
-          temp_VC={temp_VC}
-          turn_on_off_VC={turn_on_off_VC}
-        ></Click>
-      </View>
-    )
+      return (
+        <View style={styles.Click} key={`${text}_${id}`}>
+          <Click
+            time_1_percent={time_1_percent}
+            text={text}
+            onClick={onClick}
+            plus={plus}
+            sell_click={sell_click}
+            index={i}
+            auto_click={auto_click}
+            notwork_img={notwork}
+            work_img={work}
+            voltage={voltage}
+            up_voltage={up_voltage}
+            working={working}
+            voltage_VC={voltage_VC}
+            max_voltage_VC={max_voltage_VC}
+            onAlert={onAlert}
+            coif_volt={coif_volt}
+            temp={temp}
+            temp_room={temp_room}
+            oldChil={oldChil}
+            temp_VC={temp_VC}
+            turn_on_off_VC={turn_on_off_VC}
+          ></Click>
+        </View>
+      )
+    }
+
   })
   return (
     <ScrollView style={styles.ListClick}>
@@ -111,7 +115,7 @@ class Click extends PureComponent {
 
 
   turn_VC = () => {
-    const { voltage, working, index, coif_volt, temp, temp_room, oldChil} = this.props
+    const { voltage, working, index, coif_volt, temp, temp_room, oldChil } = this.props
     if (this.VC_on) {
       this.VC_on = false;
       clearInterval(this.time_auto_click)
@@ -174,7 +178,7 @@ class Click extends PureComponent {
 
   sell = (question) => {
     if (question) {
-      const { sell_click, index, temp_room} = this.props;
+      const { sell_click, index, temp_room } = this.props;
       clearTimeout(this.time_auto_click);
       clearInterval(this.time_interval_cooldown);
       sell_click(index, this.props.working, temp_room)
@@ -242,6 +246,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     flexWrap: "wrap",
+  },
+  Empty: {
+    width: 120,
+    height: 124,
+    marginTop: 0,
+    marginBottom: 2,
+    backgroundColor: '#67605E',
+    borderWidth: 3.3,
+    borderColor: "black",
   },
   Click: {
     flexDirection: "column",

@@ -15,19 +15,20 @@ class CreateFrame extends PureComponent{
         const elements = frame.map((item, i) => {
             const { nameF } = item;
             const { name } = activeFrame;
-            let clas = [], element, zIndex = 0;
+            let clas = [], element, zIndex;
             if (`${name}` === `${nameF}`) {
                 clas = [styles.FrameActive]
-                zIndex = 5;
+                zIndex = 6;
             }
             else {
                 clas = [styles.Frame]
+                zIndex = 6 - i;
             }
             // eslint-disable-next-line default-case
-            if(`${name}` == 'Click' && `${nameF}` !== 'Click')
-            {
-                return(<View key={`${nameF}`}/>)
-            }
+            // if(`${name}` == 'Click' && `${nameF}` !== 'Click')
+            // {
+            //     return(<View key={`${nameF}`}/>)
+            // }
     
             switch (nameF) {
                 case 'Click':
@@ -66,7 +67,7 @@ class CreateFrame extends PureComponent{
             return (
                 <View
                     key={`${nameF}`}
-                    style={[clas, {zIndex: zIndex}]}
+                    style={[clas, {zIndex: zIndex, width: '100%'}]}
                     // hide = {hide}
                 >
                     {element}

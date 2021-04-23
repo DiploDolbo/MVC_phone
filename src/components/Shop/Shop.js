@@ -37,7 +37,7 @@ const Shop = ({ buy_click, library_VC }) => {
             <View key={`shop_item_${i}`} style={styles.ShopItem}>
                 <View>
                     {/* <button className={`name_upgrade ${name}`} onClick={click}><div>{text}</div></button> */}
-                    <TouchableOpacity activeOpacity={0.6} style={styles.button}  onPress={() => { buy_click({ text: text, price: price, votage: voltage }) }}>
+                    <TouchableOpacity activeOpacity={0.6} style={styles.button}  onPress={() => { buy_click({ text: text, price: price}) }}>
                         <Image style={styles.Image} source={mas_VC[text]}></Image>
                         <Text style={{ fontSize: 20, textAlign: "center" }}>{text}</Text>
                     </TouchableOpacity>
