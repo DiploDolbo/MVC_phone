@@ -59,7 +59,7 @@ export default class App extends PureComponent {
   }
 
   state = {
-    money: 5000,
+    money: 0,
     spentWatts: 0,
     day: 0,
     count: 0,
@@ -87,9 +87,10 @@ export default class App extends PureComponent {
     frame: [
       { nameF: "Click" },
       { nameF: "Shop" },
-      { nameF: "Upgrade" }
+      { nameF: "Upgrade" },
+      { nameF: "Equipment"}
     ],
-    activeFrame: { name: "Click" },
+    activeFrame: { name: "Equipment" },
     curtain: false
   }
 
@@ -99,6 +100,12 @@ export default class App extends PureComponent {
     // this.add_click({text: 'empty', price: 0})
     this.paymentInterval = setInterval(this.paymentTime, this.time_payment * 1000)
     this.spentWattsInterval = setInterval(this.spentWattsFunction, 2400)
+  }
+
+  give_test_money = () => {
+    this.setState({
+      money: 5000
+    })
   }
 
   paymentTime = () => {
@@ -363,13 +370,13 @@ export default class App extends PureComponent {
   }
 
   //Tab
-  onSwitch = (nameWP, id_t) => {
-    const { name, id } = this.state.activeFrame;
+  onSwitch = (nameWP) => {
+    const { name} = this.state.activeFrame;
 
-    if (`${nameWP}_tab_${id_t}` === `${name}_tab_${id}`) return;
+    if (nameWP === name) return;
     else {
       this.setState({
-        activeFrame: { name: nameWP, id: id_t }
+        activeFrame: { name: nameWP}
       })
     }
   }
@@ -392,6 +399,9 @@ export default class App extends PureComponent {
     return (
       <View className='App'>
         <View style={styles.AppHeader}>
+          <TouchableOpacity onPress = {this.give_test_money} style={[{borderWidth: 1, borderColor: 'black',width:20, height:20}]}>
+            <Text>$</Text>
+          </TouchableOpacity>
           <Text style={{ fontSize: 30 }}>MINER VIDEOCARD</Text>
         </View>
         <Alert
@@ -440,7 +450,7 @@ const GamePlace = ({
   activeFrame, onSwitch, max_count_VC, count_VC,
   up_voltage, max_voltage_VC, voltage_VC, temp_VC,
   max_temp_VC, count_Cooler, max_count_Cooler, onAlert,
-  turn_on_off_VC, spentWatts, day, curtain, switch_curtain
+  turn_on_off_VC, spentWatts, day, curtain, switch_curtain,
 }) => {
   return (
     <View style={styles.GamePlace}>
@@ -471,7 +481,7 @@ const GamePlace = ({
               }
             </View>
             <View style={[{alignItems: 'center'}]}>
-              <TouchableOpacity activeOpacity={0.6} style={[{width:150, height: 42, justifyContent:"center", borderColor: 'black', borderWidth: 3.3}]}>
+              <TouchableOpacity activeOpacity={0.6} onPress={() => {onSwitch('Equipment')}} style={styles.Equipment}>
                 <Text style={[{textAlign: "center", fontSize: 26}]}>Оснащение</Text>
               </TouchableOpacity>
             </View>
@@ -489,7 +499,7 @@ const GamePlace = ({
               <Text style={[{ textAlign: 'right' }]}>{voltage_VC}/{max_voltage_VC} Вт</Text>
               <Text style={[{ textAlign: 'right' }]}>{temp_VC}/{max_temp_VC} С°</Text>
               <Text style={[{ textAlign: 'right' }]}>{day}</Text>
-              <Text style={[{ textAlign: 'right' }]}>{spentWatts}</Text>
+              <Text style={[{ textAlign: 'right' }]}>{spentWatts} $</Text>
             </View>
           </View>
         </View>
@@ -527,7 +537,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#B7A6A1',
     width: "100%",
     height: 52,
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     color: '#131212',
@@ -576,4 +586,11 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: "100%"
   },
+  Equipment: {
+    width:150,
+    height: 42,
+    justifyContent:"center",
+    borderColor: 'black',
+    borderWidth: 3.3
+  }
 });

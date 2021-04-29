@@ -9,14 +9,14 @@ const CreateTab = ({ tab, onSwitch, activeFrame, curtain, switch_curtain }) => {
             const { name } = activeFrame;
             let clas;
             const full_name = `${nameWP}_tab_${i}`
-            if (`${name}_tab_${i}` === full_name) {
+            if (name === nameWP) {
                 clas = [styles.TabWp, styles.TabWpActive]
             }
             else {
                 clas = [styles.TabWp]
             }
             return (
-                <TouchableOpacity key={full_name} style={clas} onPress={() => onSwitch(nameWP, i)}>
+                <TouchableOpacity key={full_name} style={clas} onPress={() => onSwitch(nameWP)}>
                     <Text>{text ? text : 'Tab'}</Text>
                 </TouchableOpacity>
             )
@@ -30,7 +30,7 @@ const CreateTab = ({ tab, onSwitch, activeFrame, curtain, switch_curtain }) => {
                 const { name } = activeFrame;
                 let clas;
                 const full_name = `${nameWP}_tab_${i}`
-                if (`${name}_tab_${i}` === full_name) {
+                if (name === nameWP) {
                     clas = [styles.TabWp, styles.TabWpActive]
                 }
                 else {

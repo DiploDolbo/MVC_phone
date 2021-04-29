@@ -4,6 +4,7 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 import Shop from '../Shop/Shop';
 import Upgrade from '../Upgrade/Upgrade';
 import Click from '../Click/Click';
+import Equipment from '../Equipment/Equipment';
 
 class CreateFrame extends PureComponent{
     render(){
@@ -61,6 +62,11 @@ class CreateFrame extends PureComponent{
                         upgrade_VC={upgrade_VC}
                     // onAlert={onAlert}
                     ></Upgrade>
+                    break;
+                case 'Equipment': 
+                    element = <Equipment
+                        
+                    ></Equipment>
                     break;
             }
     
