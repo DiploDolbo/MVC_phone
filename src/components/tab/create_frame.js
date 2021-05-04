@@ -9,9 +9,10 @@ import Equipment from '../Equipment/Equipment';
 class CreateFrame extends PureComponent{
     render(){
         const {
-            frame, activeFrame, library_VC, upgrade_VC, auto_click,
-            buy_click, sell_click, masClick, onClick, money, up_voltage,
-            voltage_VC, max_voltage_VC, onAlert, turn_on_off_VC, temp_VC
+            frame, activeFrame, library_VC, upgrade_VC, auto_click, buy_click, 
+            sell_click, masClick, masBuff, masCooler, masEnergy, masPlace, masRoom,
+            onClick, money, up_voltage,voltage_VC, max_voltage_VC,
+             onAlert, turn_on_off_VC, temp_VC
         } = this.props;
         const elements = frame.map((item, i) => {
             const { nameF } = item;
@@ -65,7 +66,11 @@ class CreateFrame extends PureComponent{
                     break;
                 case 'Equipment': 
                     element = <Equipment
-                        
+                        masBuff={masBuff}
+                        masCooler={masCooler}
+                        masEnergy={masEnergy}
+                        masPlace={masPlace}
+                        masRoom={masRoom}
                     ></Equipment>
                     break;
             }

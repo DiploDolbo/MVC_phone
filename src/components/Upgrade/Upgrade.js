@@ -28,8 +28,9 @@ const Upgrade = ({ upgrade_VC }) => {
 
     const element = upgrade_VC.map((item, i) => {
         const { buy, text, func, properties, name, name_properties, description } = item;
-        let {price} = item
-        let classN = styles.UpgradeItem, info_upgrade = '', click = () => func(properties, price);
+        let {price} = item;
+        let img = mas_Upgrade[name];
+        let classN = styles.UpgradeItem, info_upgrade = '', click = () => func(properties, price, name, img);
         if(!buy) 
         {
             // classN = [styles.UpgradeItem, styles.buy ];

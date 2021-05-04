@@ -8,7 +8,7 @@ import Tab from './src/components/tab/create_tab';
 import Frame from './src/components/tab/create_frame';
 
 import autoclick_img from './src/img/autoclick.png';
-
+import room1 from './src/img/home_img/home_lvl1.png';
 
 export default class App extends PureComponent {
 
@@ -16,11 +16,26 @@ export default class App extends PureComponent {
     super(props);
     this.time_payment = 72;//время до налогов
     this.coef_watts = 0.01;//коэф Вт в день
+    this.count_Buff = 0;
+    this.max_count_Buff = 3;
+    this.count_VC = 0;
+    this.max_count_VC = 3;
+    this.count_Cooler = 0;
+    this.max_count_Cooler = 5;
+    this.count_Energy = 0;
+    this.max_count_Energy = 4;
+    this.count_Place = 0;
+    this.max_count_Place = 3;
+    this.count_Room = 1;
+    this.max_count_Room = 3;
     this.count_buy_VC = 0;//количество за всё время купленых видюх
     // this.nowork_temp = 0.2;//коэф неработающей VC 
     this.fine_temp = 4;//коэф за перегрев
     this.empty_VC = { text: 'empty', price: 0, voltage: 0 },
-    this.library_Buff = [{name: 'autoclick', img: autoclick_img}]
+      this.empty_Upgrade = { name: 'empty', properties: 0 }
+    this.library_Buff = [
+      { name: 'autoclick', img: autoclick_img},
+    ]
     this.library_VC =
       [
         { time_1_percent: 2.4, text: 'ATI4600', plus: 1, price: 30, voltage: 20, coif_volt: 0.5, temp: 40, temp_room: 4, oldChil: 0 },
@@ -32,9 +47,15 @@ export default class App extends PureComponent {
       ];
     this.upgrade_VC = [
       {
-        buy: true, description: 'Братан будет кликать за тебя',
+        buy: true, description: 'Братан будет кликать за тебя', 
         name_properties: 'Время задержки', properties: 0.5, name: 'autoclick',
-        text: 'Помощь братана', func: this.autoClick, price: 100, coef: 0.1
+        text: 'Помощь братана', func: this.autoClick, price: 100, coef: 0.1,
+      },
+
+      {
+        buy: true, description: 'Охлади свою видюху',
+        name_properties: 'Меньше жара', properties: 10, name: 'Cooler',
+        text: 'Aeroheat', func: this.plus_chilling, price: 75, coef: 5
       },
 
       {
@@ -48,14 +69,7 @@ export default class App extends PureComponent {
         name_properties: 'Плюс место', properties: 1, name: 'FP',
         text: "Освободить место", func: this.plus_count_VC, price: 200, coef: 0
       },
-
-      {
-        buy: true, description: 'Охлади свою видюху',
-        name_properties: 'Меньше жара', properties: 10, name: 'Cooler',
-        text: 'Aeroheat', func: this.plus_chilling, price: 75, coef: 5
-      }
     ]
-    this.masCooler = []
   }
 
   state = {
@@ -64,17 +78,17 @@ export default class App extends PureComponent {
     day: 0,
     count: 0,
     payment: 0,
-    count_VC: 0,
-    max_count_VC: 3,
     voltage_VC: 0,
     max_voltage_VC: 220,
     temp_VC: 30,
     max_temp_VC: 80,
-    count_Cooler: 0,
-    max_count_Cooler: 5,
     auto_click: { can: false, time: 0 },
     masClick: [],
     masBuff: [],
+    masCooler: [],
+    masEnergy: [],
+    masPlace: [],
+    masRoom: [{name: "Room1", img: room1}],
     activeAlert: {},
     tab: [
       { nameWP: "Click", text: "ГЛАВНОЕ" },
@@ -88,7 +102,7 @@ export default class App extends PureComponent {
       { nameF: "Click" },
       { nameF: "Shop" },
       { nameF: "Upgrade" },
-      { nameF: "Equipment"}
+      { nameF: "Equipment" }
     ],
     activeFrame: { name: "Equipment" },
     curtain: false
@@ -96,6 +110,7 @@ export default class App extends PureComponent {
 
   componentDidMount() {
     this.add_click({ text: 'GT730', price: 0 })
+    this.start_empty();
     // for(let i = 1; i < this.state.max_count_VC; i++) setTimeout(() => {this.add_click({text: 'empty', price: 0})}, 10)
     // this.add_click({text: 'empty', price: 0})
     this.paymentInterval = setInterval(this.paymentTime, this.time_payment * 1000)
@@ -113,7 +128,6 @@ export default class App extends PureComponent {
     let pay = spentWatts + payment;
     let mon = (+money - pay).toFixed(1);
     this.onAlert(`ПЛАТИ НАЛОГИ ${pay}!`)
-    console.log(pay)
     this.setState({
       money: mon,
       spentWatts: 0,
@@ -134,15 +148,58 @@ export default class App extends PureComponent {
 
   // Update
 
+  start_empty = () => {
+    let masBuff = [], masCooler = [], masEnergy = [], masPlace = [], masRoom = [];
+    for (let i = 0; i < this.max_count_Buff; i++) {
+      const empty = Object.assign({}, this.empty_Upgrade);
+      masBuff.push(empty)
+    }
+    for (let i = 0; i < this.max_count_Cooler; i++) {
+      const empty = Object.assign({}, this.empty_Upgrade);
+      masCooler.push(empty)
+    }
+    for (let i = 0; i < this.max_count_Energy; i++) {
+      const empty = Object.assign({}, this.empty_Upgrade);
+      masEnergy.push(empty)
+    }
+    for (let i = 0; i < this.max_count_Place; i++) {
+      const empty = Object.assign({}, this.empty_Upgrade);
+      masPlace.push(empty)
+    }
+    // for (let i = 1; i < this.max_count_Room; i++) {
+    //   const empty = Object.assign({}, this.empty_Upgrade);
+    //   masRoom.push(empty)
+    // }
+    this.setState({
+      masBuff: masBuff,
+      masCooler: masCooler,
+      masEnergy: masEnergy,
+      masPlace: masPlace,
+      // masRoom: masRoom
+    })
+  }
+
   autoClick = (time, price) => {
-    const { money, payment, masBuff} = this.state;
+    const { money, payment, masBuff } = this.state;
     if (money >= price) {
       this.upgrade_VC[0].buy = false;
       let mon = (+money - price).toFixed(1);
       const auto = this.library_Buff.find(item => item.name == 'autoclick')
       const autoclick = Object.assign({}, auto);
+
+      let masEmpty = [];
+
+      const newMas = masBuff.filter(item => item.name != 'empty')
+
+      if (newMas.length + 1 < this.max_count_Buff) {
+        for (let i = newMas.length + 1; i < this.max_count_Buff; i++) {
+          const empty = Object.assign({}, this.empty_Upgrade);
+          masEmpty.push(empty);
+        }
+      }
+
       this.setState({
-        masBuff: [...masBuff, autoclick],
+        masBuff: [...newMas, autoclick, ...masEmpty],
         money: mon,
         payment: +payment + price * this.upgrade_VC[0].coef,
         auto_click: { can: true, time: time },
@@ -153,12 +210,24 @@ export default class App extends PureComponent {
     }
   }
 
-  pluce_voltage_VC = (count, price) => {
-    const { money, payment } = this.state;
+  pluce_voltage_VC = (count, price, name, img) => {
+    const { money, payment, masEnergy } = this.state;
     if (money >= price) {
       let mon = (+money - price).toFixed(1);
+      this.count_Energy += 1;
+      let masEmpty = [];
+
+      const newMas = masEnergy.filter(item => item.name != 'empty')
+
+      if (newMas.length + 1 < this.max_count_Energy) {
+        for (let i = newMas.length + 1; i < this.max_count_Energy; i++) {
+          const empty = Object.assign({}, this.empty_Upgrade);
+          masEmpty.push(empty);
+        }
+      }
       this.setState({
         money: mon,
+        masEnergy: [...newMas, {name: name, properti: count, img: img}, ...masEmpty],
         payment: +payment + price * this.upgrade_VC[1].coef,
         max_voltage_VC: this.state.max_voltage_VC + count
       })
@@ -168,19 +237,32 @@ export default class App extends PureComponent {
     }
   }
 
-  plus_count_VC = (count, price) => {
-    const { money, payment, masClick } = this.state;
+  plus_count_VC = (count, price, name, img) => {
+    const { money, payment, masClick, masPlace } = this.state;
     const emptyClick = Object.assign({}, this.empty_VC);
 
     const newMasClick = [...masClick, emptyClick]
-    if (money >= price) {
+    if (money >= price && this.count_Place < this.max_count_Place) {
       let mon = (+money - price).toFixed(1);
+      this.max_count_VC += count
+      this.count_Place += 1
+
+      let masEmpty = [];
+
+      const newMas = masPlace.filter(item => item.name != 'empty')
+
+      if (newMas.length + 1 < this.max_count_Place) {
+        for (let i = newMas.length + 1; i < this.max_count_Place; i++) {
+          const empty = Object.assign({}, this.empty_Upgrade);
+          masEmpty.push(empty);
+        }
+      }
 
       this.setState({
         money: mon,
         masClick: newMasClick,
+        masPlace: [...newMas, {name: name, properti: count, img: img}, ...masEmpty],
         payment: +payment + price * this.upgrade_VC[2].coef,
-        max_count_VC: this.state.max_count_VC + count
       })
     }
     else if (money < price) {
@@ -188,15 +270,26 @@ export default class App extends PureComponent {
     }
   }
 
-  plus_chilling = (count, price) => {
-    const { money, voltage_VC, count_Cooler, max_count_Cooler } = this.state;
-    if (money >= price && count_Cooler < max_count_Cooler) {
+  plus_chilling = (count, price, name, img) => {
+    const { money, voltage_VC, masCooler } = this.state;
+    if (money >= price && this.count_Cooler < this.max_count_Cooler) {
       let mon = (+money - price).toFixed(1);
-      this.masCooler.push(count / 100);
+      this.count_Cooler += 1;
+      let masEmpty = [];
+
+      const newMas = masCooler.filter(item => item.name != 'empty')
+
+      if (newMas.length + 1 < this.max_count_Cooler) {
+        for (let i = newMas.length + 1; i < this.max_count_Cooler; i++) {
+          const empty = Object.assign({}, this.empty_Upgrade);
+          masEmpty.push(empty);
+        }
+      }
+
       this.setState({
         money: mon,
+        masCooler: [...newMas, { name: name, properti: count / 100, img: img}, ...masEmpty],
         voltage_VC: voltage_VC + this.upgrade_VC[3].coef,
-        count_Cooler: count_Cooler + 1
       })
     }
     else if (money < price) {
@@ -226,10 +319,10 @@ export default class App extends PureComponent {
 
   }
 
-  up_voltage = (voltage, working, index, coef, temp, temp_room, oldChil) => {
+  up_voltage = (voltage, working, index, temp_room, oldChil) => {
     let volt, t, chil = 0;
 
-    this.masCooler.map((item) => chil += item)
+    this.state.masCooler.map((item) => chil += item)
     // const indexClick = this.state.masClick.findIndex((item) => { return item.id === id && item.text === text })
     const fClick = this.state.masClick.slice(0, index);
     const sClick = this.state.masClick.slice(index + 1);
@@ -254,7 +347,7 @@ export default class App extends PureComponent {
   }
 
   add_click = ({ text, price }) => {
-    const { masClick, money, count_VC, voltage_VC, max_count_VC } = this.state;
+    const { masClick, money, voltage_VC } = this.state;
     const indexClick = this.library_VC.findIndex(item => item.text === text)
     const nClick = this.library_VC.slice(indexClick, indexClick + 1);
     const newClick = Object.assign({}, nClick[0]);
@@ -266,37 +359,36 @@ export default class App extends PureComponent {
     newClick.working = false;
     newClick.id = this.count_buy_VC;
     let mon = (+money - price).toFixed(1)
-    if (newMasClick.length + 1 < max_count_VC) {
-      for (let i = newMasClick.length + 1; i < max_count_VC; i++) {
+    if (newMasClick.length + 1 < this.max_count_VC) {
+      for (let i = newMasClick.length + 1; i < this.max_count_VC; i++) {
         const emptyClick = Object.assign({}, this.empty_VC);
         masEmpty.push(emptyClick);
       }
     }
-
+    this.count_VC += 1;
     this.setState({
       masClick: [...newMasClick, newClick, ...masEmpty],
       money: mon,
-      count_VC: count_VC + 1,
       voltage_VC: voltage_VC + newClick.voltage,
     })
   }
 
   buy_click = ({ text, price }) => {
-    const { money, count_VC, max_count_VC } = this.state;
-    if (money >= price && count_VC < max_count_VC) { this.add_click({ text, price }) }
+    const { money } = this.state;
+    if (money >= price && this.count_VC < this.max_count_VC) { this.add_click({ text, price }) }
     else if (money < price) {
       this.onAlert('Не хватает')
     }
     // else if (voltage_VC >= max_voltage_VC){
     //   this.onAlert('БП не потянет')
     // }
-    else if (count_VC >= max_count_VC) {
+    else if (this.count_VC >= this.max_count_VC) {
       this.onAlert('Нет места')
     }
   }
 
   sell_click = (index, working, temp_room) => {
-    const { masClick, money, count_VC, voltage_VC} = this.state;
+    const { masClick, money, voltage_VC } = this.state;
     // const index = masClick.findIndex((item) => { return item.id === id && item.text === text })
     const emptyClick = Object.assign({}, this.empty_VC);
 
@@ -314,19 +406,19 @@ export default class App extends PureComponent {
       volt = masClick[index].voltage
       t = this.state.temp_VC;
     };
+    this.count_VC -= 1;
     this.setState({
       money: mon,
       masClick: newMasClick,
-      count_VC: count_VC - 1,
       voltage_VC: voltage_VC - volt,
       temp_VC: t
     })
   }
 
-  turn_on_off_VC = (voltage, working, index, VC_on, coif_volt, temp, temp_room, oldChil) => {
+  turn_on_off_VC = (voltage, working, index, VC_on, temp_room, oldChil) => {
     let volt, t = this.state.temp_VC, chil = 0;
     // const indexClick = this.state.masClick.findIndex((item) => { return item.id === id && item.text === text })
-    this.masCooler.map((item) => chil += item)
+    this.state.masCooler.map((item) => chil += item)
     const fClick = this.state.masClick.slice(0, index);
     const sClick = this.state.masClick.slice(index + 1);
     let click = Object.assign({}, this.state.masClick[index]);
@@ -371,12 +463,12 @@ export default class App extends PureComponent {
 
   //Tab
   onSwitch = (nameWP) => {
-    const { name} = this.state.activeFrame;
+    const { name } = this.state.activeFrame;
 
     if (nameWP === name) return;
     else {
       this.setState({
-        activeFrame: { name: nameWP}
+        activeFrame: { name: nameWP }
       })
     }
   }
@@ -390,16 +482,14 @@ export default class App extends PureComponent {
 
   render() {
     const {
-      money, masClick, masBuff, activeAlert, tab, frame,
-      activeFrame, auto_click, count_VC, max_count_VC,
-      voltage_VC, max_voltage_VC, temp_VC, max_temp_VC,
-      count_Cooler, max_count_Cooler, spentWatts, day,
-      curtain
+      money, masClick, masCooler, masEnergy, masPlace, masRoom,
+      masBuff, activeAlert, tab, frame, activeFrame, auto_click,
+      voltage_VC, max_voltage_VC, temp_VC, max_temp_VC, spentWatts, day, curtain
     } = this.state;
     return (
       <View className='App'>
         <View style={styles.AppHeader}>
-          <TouchableOpacity onPress = {this.give_test_money} style={[{borderWidth: 1, borderColor: 'black',width:20, height:20}]}>
+          <TouchableOpacity onPress={this.give_test_money} style={[{ borderWidth: 1, borderColor: 'black', width: 20, height: 20 }]}>
             <Text>$</Text>
           </TouchableOpacity>
           <Text style={{ fontSize: 30 }}>MINER VIDEOCARD</Text>
@@ -411,6 +501,10 @@ export default class App extends PureComponent {
         <GamePlace
           masClick={masClick}
           masBuff={masBuff}
+          masCooler={masCooler}
+          masEnergy={masEnergy}
+          masPlace={masPlace}
+          masRoom={masRoom}
           money={money}
           onClick={this.click}
           buy_click={this.buy_click}
@@ -422,15 +516,11 @@ export default class App extends PureComponent {
           frame={frame}
           activeFrame={activeFrame}
           onSwitch={this.onSwitch}
-          count_VC={count_VC}
-          max_count_VC={max_count_VC}
           up_voltage={this.up_voltage}
           voltage_VC={voltage_VC}
           max_voltage_VC={max_voltage_VC}
           temp_VC={temp_VC}
           max_temp_VC={max_temp_VC}
-          count_Cooler={count_Cooler}
-          max_count_Cooler={max_count_Cooler}
           onAlert={this.onAlert}
           turn_on_off_VC={this.turn_on_off_VC}
           spentWatts={spentWatts}
@@ -445,12 +535,11 @@ export default class App extends PureComponent {
 }
 
 const GamePlace = ({
-  masClick, masBuff, money, onClick, buy_click, sell_click,
+  masClick, masBuff, masCooler, masEnergy, masPlace, masRoom,
+  money, onClick, buy_click, sell_click,
   library_VC, upgrade_VC, auto_click, tab, frame,
-  activeFrame, onSwitch, max_count_VC, count_VC,
-  up_voltage, max_voltage_VC, voltage_VC, temp_VC,
-  max_temp_VC, count_Cooler, max_count_Cooler, onAlert,
-  turn_on_off_VC, spentWatts, day, curtain, switch_curtain,
+  activeFrame, onSwitch, up_voltage, max_voltage_VC, voltage_VC, temp_VC,
+  max_temp_VC, onAlert, turn_on_off_VC, spentWatts, day, curtain, switch_curtain,
 }) => {
   return (
     <View style={styles.GamePlace}>
@@ -467,22 +556,25 @@ const GamePlace = ({
           </Tab>
         </View>
         <View style={styles.GameInfoImg}>
-          <View style={[{ width: 164, height: 108, borderWidth: 3.3, borderColor: 'black' }]}>
-            <View style={[{flexDirection: 'row', height: 54}]}>
+          <View style={[{ width: 164, height: 108}]}>
+            <View style={[{ flexDirection: 'row', height: 54 }]}>
               {
                 masBuff.map((item, i) => {
-                  const {img} = item;
-                  return(
-                    <View style={[{width: 50, height: 50, padding: 5}]}>
-                      <Image style={[{width: 48, height: 48, resizeMode: 'contain'}]} key = {`buff_${i}`} source = {img}></Image>
-                    </View>
-                  )
+                  if (item.name == 'empty'){return (<View key={`empty_Buff_${i}`} style={styles.Empty}></View>) }
+                  else {
+                    const { img } = item;
+                    return (
+                      <View key={`empty_Buff_${i}`} style={[{ width: 50, height: 50, margin: 1 }]}>
+                        <Image style={[{ width: 50, height: 50, resizeMode: 'contain' }]} key={`buff_${i}`} source={img}></Image>
+                      </View>
+                    )
+                  }
                 })
               }
             </View>
-            <View style={[{alignItems: 'center'}]}>
-              <TouchableOpacity activeOpacity={0.6} onPress={() => {onSwitch('Equipment')}} style={styles.Equipment}>
-                <Text style={[{textAlign: "center", fontSize: 26}]}>Оснащение</Text>
+            <View style={[{ alignItems: 'center' }]}>
+              <TouchableOpacity activeOpacity={0.6} onPress={() => { onSwitch('Equipment') }} style={styles.Equipment}>
+                <Text style={[{ textAlign: "center", fontSize: 26 }]}>Оснащение</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -494,7 +586,7 @@ const GamePlace = ({
               <Text>День:</Text>
               <Text>Налоги:</Text>
             </View>
-            <View style={[{position: "absolute", right: 0 }]}>
+            <View style={[{ position: "absolute", right: 0 }]}>
               <Text style={[{ textAlign: 'right' }]}>{money} $</Text>
               <Text style={[{ textAlign: 'right' }]}>{voltage_VC}/{max_voltage_VC} Вт</Text>
               <Text style={[{ textAlign: 'right' }]}>{temp_VC}/{max_temp_VC} С°</Text>
@@ -514,6 +606,11 @@ const GamePlace = ({
             upgrade_VC={upgrade_VC}
             auto_click={auto_click}
             masClick={masClick}
+            masBuff={masBuff}
+            masCooler={masCooler}
+            masEnergy={masEnergy}
+            masPlace={masPlace}
+            masRoom={masRoom}
             onClick={onClick}
             up_voltage={up_voltage}
             money={money}
@@ -587,10 +684,24 @@ const styles = StyleSheet.create({
     width: "100%"
   },
   Equipment: {
-    width:150,
-    height: 42,
-    justifyContent:"center",
+    width: 161,
+    height: 52,
+    justifyContent: "center",
     borderColor: 'black',
     borderWidth: 3.3
-  }
+  },
+  Empty: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#67605E',
+    borderWidth: 3.3,
+    borderColor: "black",
+    margin: 1
+  },
+  Image: {
+    width: 52,
+    height: 52,
+    resizeMode: 'contain',
+    margin: 1
+  },
 });

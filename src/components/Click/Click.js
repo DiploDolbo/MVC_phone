@@ -115,16 +115,16 @@ class Click extends PureComponent {
 
 
   turn_VC = () => {
-    const { voltage, working, index, coif_volt, temp, temp_room, oldChil } = this.props
+    const { voltage, working, index, temp_room, oldChil } = this.props
     if (this.VC_on) {
       this.VC_on = false;
       clearInterval(this.time_auto_click)
       clearTimeout(this.time_interval_cooldown)
-      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp, temp_room, oldChil)
+      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, temp_room, oldChil)
     }
     else {
       this.VC_on = true;
-      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, coif_volt, temp, temp_room, oldChil)
+      this.props.turn_on_off_VC(voltage, working, index, this.VC_on, temp_room, oldChil)
     }
     this.setState({
       cooldown: 0,
@@ -149,14 +149,14 @@ class Click extends PureComponent {
     }
   }
   start_cooldown = (plus, voltage) => {
-    const { time_1_percent, working, index, coif_volt, temp, temp_room, oldChil } = this.props;
-    this.props.up_voltage(voltage, working, index, 1, temp, temp_room, oldChil);
+    const { time_1_percent, working, index, temp_room, oldChil } = this.props;
+    this.props.up_voltage(voltage, working, index, temp_room, oldChil);
     this.time_interval_cooldown = setInterval(() => this.plus_cooldown(plus, voltage), time_1_percent * 10)
   }
 
   plus_cooldown = (plus, voltage) => {
     const { cooldown, temperature } = this.state;
-    const { working, index, coif_volt, temp, temp_room, temp_VC, oldChil } = this.props
+    const { working, index, temp, temp_room, temp_VC, oldChil } = this.props
     let t = +((temp + temp_VC).toFixed(1))
     if (cooldown !== 100) {
       this.setState({
@@ -167,7 +167,7 @@ class Click extends PureComponent {
     else {
       clearInterval(this.time_interval_cooldown);
       this.props.onClick(plus, temperature);
-      this.props.up_voltage(voltage, working, index, 1, temp, temp_room, oldChil);
+      this.props.up_voltage(voltage, working, index, temp_room, oldChil);
       this.auto_click();
       this.setState({
         cooldown: 0,
