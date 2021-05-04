@@ -1,7 +1,8 @@
 // import * as Updates from "expo-updates";
 import { StatusBar } from 'expo-status-bar';
 import React, { PureComponent } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Alert from './src/components/alert/alert'
 import Tab from './src/components/tab/create_tab';
@@ -104,7 +105,7 @@ export default class App extends PureComponent {
       { nameF: "Upgrade" },
       { nameF: "Equipment" }
     ],
-    activeFrame: { name: "Equipment" },
+    activeFrame: { name: "Click" },
     curtain: false
   }
 
@@ -115,6 +116,9 @@ export default class App extends PureComponent {
     // this.add_click({text: 'empty', price: 0})
     this.paymentInterval = setInterval(this.paymentTime, this.time_payment * 1000)
     this.spentWattsInterval = setInterval(this.spentWattsFunction, 2400)
+    
+    //Сохранения
+    this.getData();
   }
 
   give_test_money = () => {
@@ -122,6 +126,56 @@ export default class App extends PureComponent {
       money: 5000
     })
   }
+
+  new_game = () =>{
+    this.setState({
+      money: 0
+    })
+  }
+
+  ///Сохранения
+  storeData = async (mon) => {
+    try {
+      await AsyncStorage.setItem('money', mon)
+    } catch (e) {
+      // saving error
+    }
+  }
+  // storeData = async (value) => {
+  //   try {
+  //     const jsonValue = JSON.stringify(value)
+  //     await AsyncStorage.setItem('@storage_Key', jsonValue)
+  //   } catch (e) {
+  //     // saving error
+  //   }
+  // }
+
+  //
+
+  getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('money')
+      console.log(value);
+      if(value !== null) {
+        this.setState({
+          money: value,
+        })
+        // value previously stored
+      }
+    } catch(e) {
+      // error reading value
+    }
+  }
+
+  // getData = async () => {
+  //   try {
+  //     const jsonValue = await AsyncStorage.getItem('@storage_Key')
+  //     return jsonValue != null ? JSON.parse(jsonValue) : null;
+  //   } catch(e) {
+  //     // error reading value
+  //   }
+  // }
+  ///
 
   paymentTime = () => {
     const { money, payment, spentWatts } = this.state;
@@ -313,6 +367,8 @@ export default class App extends PureComponent {
       minus = 1 - ((temperature / max_temp_VC) - 1) * this.fine_temp;
       mon = (+money + plus * minus).toFixed(1)
     }
+
+    this.storeData(mon)
     this.setState({
       money: mon,
     })
@@ -322,7 +378,7 @@ export default class App extends PureComponent {
   up_voltage = (voltage, working, index, temp_room, oldChil) => {
     let volt, t, chil = 0;
 
-    this.state.masCooler.map((item) => chil += item)
+    this.state.masCooler.map((item) => chil += item.properties)
     // const indexClick = this.state.masClick.findIndex((item) => { return item.id === id && item.text === text })
     const fClick = this.state.masClick.slice(0, index);
     const sClick = this.state.masClick.slice(index + 1);
@@ -418,7 +474,7 @@ export default class App extends PureComponent {
   turn_on_off_VC = (voltage, working, index, VC_on, temp_room, oldChil) => {
     let volt, t = this.state.temp_VC, chil = 0;
     // const indexClick = this.state.masClick.findIndex((item) => { return item.id === id && item.text === text })
-    this.state.masCooler.map((item) => chil += item)
+    this.state.masCooler.map((item) => chil += item.properties)
     const fClick = this.state.masClick.slice(0, index);
     const sClick = this.state.masClick.slice(index + 1);
     let click = Object.assign({}, this.state.masClick[index]);
@@ -491,6 +547,9 @@ export default class App extends PureComponent {
         <View style={styles.AppHeader}>
           <TouchableOpacity onPress={this.give_test_money} style={[{ borderWidth: 1, borderColor: 'black', width: 20, height: 20 }]}>
             <Text>$</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.new_game} style={[{ borderWidth: 1, borderColor: 'black', width: 20, height: 20 }]}>
+            <Text>N</Text>
           </TouchableOpacity>
           <Text style={{ fontSize: 30 }}>MINER VIDEOCARD</Text>
         </View>

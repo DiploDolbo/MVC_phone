@@ -3,82 +3,82 @@ import { StyleSheet, Text, ScrollView, View, Image, Alert, Pressable } from 'rea
 
 import room1 from '../../img/home_img/home_lvl1.png';
 
-const Equipment = ({masCooler, masEnergy, masPlace, masRoom }) => {
+class Equipment extends PureComponent{
 
-    const mas = {
-
+    render(){
+        const {masCooler, masEnergy, masPlace, masRoom } = this.props;
+        return (
+            <View style={styles.Equipment}>
+                <View style={styles.Row_1}>
+                    <View style={styles.ChillList}>
+                        <Text style={styles.text}>ОХЛАЖДЕНИЕ</Text>
+                        <View style={styles.Chill}>
+                            {
+                                masCooler.map((item, i) => {
+                                    if (item.name == 'empty') { return (<View key={`empty_Cooler_${i}`} style={styles.Empty}></View>) }
+                                    else {
+                                        return (<View key={`Chill_${i}`}>
+                                            <Image style={styles.Image} source={item.img}></Image>
+                                        </View>)
+                                    }
+                                })
+                            }
+                        </View>
+                    </View>
+                    <View style={styles.EnergyList}>
+                        <Text style={styles.text}>ЭНЕРГИЯ</Text>
+                        <View style={styles.Energy}>
+                            {
+                                masEnergy.map((item, i) => {
+                                    if (item.name == 'empty') { return (<View key={`empty_Energy_${i}`} style={styles.Empty}></View>) }
+                                    else {
+                                        return (<View key={`Energy_${i}`}>
+                                            <Image style={styles.Image} source={item.img}></Image>
+                                        </View>)
+                                    }
+                                })
+                            }
+                        </View>
+                    </View>
+                </View>
+                <View style={styles.Row_2}>
+                    <View style={styles.PlaceList}>
+                        <Text style={styles.text}>МЕСТО</Text>
+                        <View style={styles.Place}>
+                            {
+                                masPlace.map((item, i) => {
+                                    if (item.name == 'empty') { return (<View key={`empty_Place_${i}`} style={styles.Empty}></View>) }
+                                    else {
+                                        return (<View key={`Place_${i}`}>
+                                            <Image style={styles.Image} source={item.img}></Image>
+                                        </View>)
+                                    }
+                                })
+                            }
+                        </View>
+                    </View>
+                </View>
+                <View style={styles.Row_3}>
+                    <View style={styles.RoomList}>
+                        <Text style={styles.text}>ПОМЕЩЕНИЕ</Text>
+                        <View style={styles.Room}>
+                            {
+                                masRoom.map((item, i) => {
+                                    if (item.name == 'empty') { return (<View key={`empty_Room_${i}`} style={styles.Empty}></View>) }
+                                    else {
+                                        return (<View key={`Room_${i}`}>
+                                            <Image style={styles.Image} source={room1}></Image>
+                                        </View>)
+                                    }
+                                })
+                            }
+                        </View>
+                    </View>
+                </View>
+            </View>
+    
+        )
     }
-    return (
-        <View style={styles.Equipment}>
-            <View style={styles.Row_1}>
-                <View style={styles.ChillList}>
-                    <Text style={styles.text}>ОХЛАЖДЕНИЕ</Text>
-                    <View style={styles.Chill}>
-                        {
-                            masCooler.map((item, i) => {
-                                if (item.name == 'empty') { return (<View key={`empty_Cooler_${i}`} style={styles.Empty}></View>) }
-                                else {
-                                    return (<View key={`Chill_${i}`}>
-                                        <Image style={styles.Image} source={item.img}></Image>
-                                    </View>)
-                                }
-                            })
-                        }
-                    </View>
-                </View>
-                <View style={styles.EnergyList}>
-                    <Text style={styles.text}>ЭНЕРГИЯ</Text>
-                    <View style={styles.Energy}>
-                        {
-                            masEnergy.map((item, i) => {
-                                if (item.name == 'empty') { return (<View key={`empty_Energy_${i}`} style={styles.Empty}></View>) }
-                                else {
-                                    return (<View key={`Energy_${i}`}>
-                                        <Image style={styles.Image} source={item.img}></Image>
-                                    </View>)
-                                }
-                            })
-                        }
-                    </View>
-                </View>
-            </View>
-            <View style={styles.Row_2}>
-                <View style={styles.PlaceList}>
-                    <Text style={styles.text}>МЕСТО</Text>
-                    <View style={styles.Place}>
-                        {
-                            masPlace.map((item, i) => {
-                                if (item.name == 'empty') { return (<View key={`empty_Place_${i}`} style={styles.Empty}></View>) }
-                                else {
-                                    return (<View key={`Place_${i}`}>
-                                        <Image style={styles.Image} source={item.img}></Image>
-                                    </View>)
-                                }
-                            })
-                        }
-                    </View>
-                </View>
-            </View>
-            <View style={styles.Row_3}>
-                <View style={styles.RoomList}>
-                    <Text style={styles.text}>ПОМЕЩЕНИЕ</Text>
-                    <View style={styles.Room}>
-                        {
-                            masRoom.map((item, i) => {
-                                if (item.name == 'empty') { return (<View key={`empty_Room_${i}`} style={styles.Empty}></View>) }
-                                else {
-                                    return (<View key={`Room_${i}`}>
-                                        <Image style={styles.Image} source={room1}></Image>
-                                    </View>)
-                                }
-                            })
-                        }
-                    </View>
-                </View>
-            </View>
-        </View>
-
-    )
 }
 
 const styles = StyleSheet.create({
