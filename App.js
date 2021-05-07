@@ -10,6 +10,7 @@ import Frame from './src/components/tab/create_frame';
 
 import autoclick_img from './src/img/autoclick.png';
 import room1 from './src/img/home_img/home_lvl1.png';
+import BP_img from './src/img/bp.png';
 
 export default class App extends PureComponent {
 
@@ -80,7 +81,7 @@ export default class App extends PureComponent {
     count: 0,
     payment: 0,
     voltage_VC: 0,
-    max_voltage_VC: 220,
+    max_voltage_VC: 0,
     temp_VC: 30,
     max_temp_VC: 80,
     auto_click: { can: false, time: 0 },
@@ -110,15 +111,15 @@ export default class App extends PureComponent {
   }
 
   componentDidMount() {
+    this.getData();
     this.add_click({ text: 'GT730', price: 0 })
     this.start_empty();
+    this.pluce_voltage_VC(220, 0, 'BP', BP_img)
+
     // for(let i = 1; i < this.state.max_count_VC; i++) setTimeout(() => {this.add_click({text: 'empty', price: 0})}, 10)
     // this.add_click({text: 'empty', price: 0})
     this.paymentInterval = setInterval(this.paymentTime, this.time_payment * 1000)
     this.spentWattsInterval = setInterval(this.spentWattsFunction, 2400)
-    
-    //Сохранения
-    this.getData();
   }
 
   give_test_money = () => {
@@ -224,6 +225,7 @@ export default class App extends PureComponent {
     //   const empty = Object.assign({}, this.empty_Upgrade);
     //   masRoom.push(empty)
     // }
+
     this.setState({
       masBuff: masBuff,
       masCooler: masCooler,
@@ -251,7 +253,7 @@ export default class App extends PureComponent {
           masEmpty.push(empty);
         }
       }
-
+      this.storeData(mon);
       this.setState({
         masBuff: [...newMas, autoclick, ...masEmpty],
         money: mon,
@@ -266,7 +268,7 @@ export default class App extends PureComponent {
 
   pluce_voltage_VC = (count, price, name, img) => {
     const { money, payment, masEnergy } = this.state;
-    if (money >= price) {
+    if (money >= price && this.count_Energy < this.max_count_Energy) {
       let mon = (+money - price).toFixed(1);
       this.count_Energy += 1;
       let masEmpty = [];
@@ -279,6 +281,7 @@ export default class App extends PureComponent {
           masEmpty.push(empty);
         }
       }
+      this.storeData(mon)
       this.setState({
         money: mon,
         masEnergy: [...newMas, {name: name, properti: count, img: img}, ...masEmpty],
@@ -288,6 +291,9 @@ export default class App extends PureComponent {
     }
     else if (money < price) {
       this.onAlert('Не хватает')
+    }
+    else if (this.count_Energy == this.max_count_Energy) {
+      this.onAlert('Некуда ставить')
     }
   }
 
@@ -311,7 +317,7 @@ export default class App extends PureComponent {
           masEmpty.push(empty);
         }
       }
-
+      this.storeData(mon)
       this.setState({
         money: mon,
         masClick: newMasClick,
@@ -321,6 +327,9 @@ export default class App extends PureComponent {
     }
     else if (money < price) {
       this.onAlert('Не хватает')
+    }
+    else if (this.count_Place == this.max_count_Place) {
+      this.onAlert('Некуда ставить')
     }
   }
 
@@ -339,7 +348,7 @@ export default class App extends PureComponent {
           masEmpty.push(empty);
         }
       }
-
+      this.storeData(mon)
       this.setState({
         money: mon,
         masCooler: [...newMas, { name: name, properti: count / 100, img: img}, ...masEmpty],
@@ -349,7 +358,7 @@ export default class App extends PureComponent {
     else if (money < price) {
       this.onAlert('Не хватает')
     }
-    else if (count_Cooler > max_count_Cooler) {
+    else if (this.count_Cooler == this.max_count_Cooler) {
       this.onAlert('Некуда ставить')
     }
 
@@ -422,6 +431,7 @@ export default class App extends PureComponent {
       }
     }
     this.count_VC += 1;
+    this.storeData(mon)
     this.setState({
       masClick: [...newMasClick, newClick, ...masEmpty],
       money: mon,
@@ -463,6 +473,7 @@ export default class App extends PureComponent {
       t = this.state.temp_VC;
     };
     this.count_VC -= 1;
+    this.storeData(mon);
     this.setState({
       money: mon,
       masClick: newMasClick,

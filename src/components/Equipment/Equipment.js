@@ -87,7 +87,8 @@ const styles = StyleSheet.create({
         width: "100%",
         marginTop: 20,
         display: 'flex',
-        flexDirection: "column"
+        flexDirection: "column",
+        justifyContent: "center"
     },
     Empty: {
         width: 52,
@@ -118,6 +119,7 @@ const styles = StyleSheet.create({
     Row_1: {
         display: "flex",
         flexDirection: "row",
+        justifyContent: "center",
         width: '100%',
     },
     ChillList: {
@@ -163,7 +165,11 @@ const styles = StyleSheet.create({
         // borderColor: "#131212",
     },
     Row_2: {
-        marginTop: 10
+        marginTop: 10,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: 'center',
+        justifyContent: "center",
     },
     PlaceList: {
         height: 105,
@@ -187,7 +193,11 @@ const styles = StyleSheet.create({
         // borderColor: "#131212",
     },
     Row_3: {
-        marginTop: 10
+        marginTop: 10,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: 'center',
+        justifyContent: "center",
     },
     RoomList: {
         height: 105,
