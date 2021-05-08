@@ -3,10 +3,7 @@ import {
     Text,
     View,
     ScrollView,
-    Button,
     Image,
-    Alert,
-    Pressable,
     TouchableOpacity
 } from 'react-native';
 import React, { PureComponent } from "react";

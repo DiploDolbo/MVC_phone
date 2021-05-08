@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import {StyleSheet, View } from 'react-native';
 
 import Shop from '../Shop/Shop';
 import Upgrade from '../Upgrade/Upgrade';

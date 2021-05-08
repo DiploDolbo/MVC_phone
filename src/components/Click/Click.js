@@ -23,71 +23,72 @@ import VC_off_img from '../../img/switch1_off.png';
 // Инфо
 // import info_click_img from '../../img/work/InfoClick.png'
 
+class click extends PureComponent {
 
-const click = (
-  { masClick, onClick, money, sell_click, auto_click, up_voltage,
-    voltage_VC, max_voltage_VC, onAlert, turn_on_off_VC, temp_VC }
-) => {
-  const mas_VC =
-  {
-    ATI4600_notwork: ATI4600_notwork,
-    ATI4600_work: ATI4600_work,
-    GT730_notwork: gt730_notwork,
-    GT730_work: gt730_work,
-    GT750_notwork: gt750_notwork,
-    GT750_work: gt750_work,
-    GT760_notwork: gt760_notwork,
-    GT760_work: gt760_work,
-    HP_G6_notwork: HP_G6_notwork,
-    HP_G6_work: HP_G6_work,
-    i5_6400_notwork: i5_6400_notwork,
-    i5_6400_work: i5_6400_work
-  }
-
-  const element = masClick.map((item, i) => {
-    if (item.text == 'empty') {return (<View key={`empty_click_${i}`} style={styles.Empty}></View>)}
-    else {
-      const { time_1_percent, text, id, plus, voltage, working, coif_volt, temp, temp_room, oldChil } = item;
-      const notwork = mas_VC[`${text}_notwork`];
-      const work = mas_VC[`${text}_work`];
-
-      return (
-        <View style={styles.Click} key={`${text}_${id}`}>
-          <Click
-            time_1_percent={time_1_percent}
-            text={text}
-            onClick={onClick}
-            plus={plus}
-            sell_click={sell_click}
-            index={i}
-            auto_click={auto_click}
-            notwork_img={notwork}
-            work_img={work}
-            voltage={voltage}
-            up_voltage={up_voltage}
-            working={working}
-            voltage_VC={voltage_VC}
-            max_voltage_VC={max_voltage_VC}
-            onAlert={onAlert}
-            coif_volt={coif_volt}
-            temp={temp}
-            temp_room={temp_room}
-            oldChil={oldChil}
-            temp_VC={temp_VC}
-            turn_on_off_VC={turn_on_off_VC}
-          ></Click>
-        </View>
-      )
+  render() {
+    const { masClick, onClick, sell_click, auto_click, up_voltage,
+      voltage_VC, max_voltage_VC, onAlert, turn_on_off_VC, temp_VC } = this.props;
+    const mas_VC =
+    {
+      ATI4600_notwork: ATI4600_notwork,
+      ATI4600_work: ATI4600_work,
+      GT730_notwork: gt730_notwork,
+      GT730_work: gt730_work,
+      GT750_notwork: gt750_notwork,
+      GT750_work: gt750_work,
+      GT760_notwork: gt760_notwork,
+      GT760_work: gt760_work,
+      HP_G6_notwork: HP_G6_notwork,
+      HP_G6_work: HP_G6_work,
+      i5_6400_notwork: i5_6400_notwork,
+      i5_6400_work: i5_6400_work
     }
 
-  })
-  return (
-    <ScrollView style={styles.ListClick}>
-      <View style={styles.List}>
-        {element}
-      </View>
-    </ScrollView>
-  )
+    const element = masClick.map((item, i) => {
+      if (item.text == 'empty') { return (<View key={`empty_click_${i}`} style={styles.Empty}></View>) }
+      else {
+        const { time_1_percent, text, id, plus, voltage, working, coif_volt, temp, temp_room, oldChil } = item;
+        const notwork = mas_VC[`${text}_notwork`];
+        const work = mas_VC[`${text}_work`];
+
+        return (
+          <View style={styles.Click} key={`${text}_${id}`}>
+            <Click
+              time_1_percent={time_1_percent}
+              text={text}
+              onClick={onClick}
+              plus={plus}
+              sell_click={sell_click}
+              index={i}
+              auto_click={auto_click}
+              notwork_img={notwork}
+              work_img={work}
+              voltage={voltage}
+              up_voltage={up_voltage}
+              working={working}
+              voltage_VC={voltage_VC}
+              max_voltage_VC={max_voltage_VC}
+              onAlert={onAlert}
+              coif_volt={coif_volt}
+              temp={temp}
+              temp_room={temp_room}
+              oldChil={oldChil}
+              temp_VC={temp_VC}
+              turn_on_off_VC={turn_on_off_VC}
+            ></Click>
+          </View>
+        )
+      }
+
+    })
+    return (
+      <ScrollView style={styles.ListClick}>
+        <View style={styles.List}>
+          {element}
+        </View>
+      </ScrollView>
+    )
+  }
 }
 
 class Click extends PureComponent {

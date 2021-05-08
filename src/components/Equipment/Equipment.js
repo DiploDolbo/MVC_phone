@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet, Text, ScrollView, View, Image, Alert, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image} from 'react-native';
 
 import room1 from '../../img/home_img/home_lvl1.png';
 

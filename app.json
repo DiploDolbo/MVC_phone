@@ -4,9 +4,9 @@
     "slug": "MVC_phone",
     "version": "0.0.1",
     "orientation": "portrait",
-    "icon": "./assets/MinerVideoCard_icon.png",
+    "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/MinerVideoCard_icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -24,13 +24,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/MinerVideoCard_icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.drunkhead.mvc"
     },
     "web": {
-      "favicon": "./assets/MinerVideoCard_icon.png"
+      "favicon": "./assets/favicon.png"
     },
     "description": ""
   }

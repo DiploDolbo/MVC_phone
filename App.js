@@ -111,9 +111,7 @@ export default class App extends PureComponent {
   }
 
   componentDidMount() {
-    this.getData();
     this.add_click({ text: 'GT730', price: 0 })
-    this.start_empty();
     this.pluce_voltage_VC(220, 0, 'BP', BP_img)
 
     // for(let i = 1; i < this.state.max_count_VC; i++) setTimeout(() => {this.add_click({text: 'empty', price: 0})}, 10)
@@ -129,37 +127,48 @@ export default class App extends PureComponent {
   }
 
   new_game = () =>{
+    this.start_empty()
     this.setState({
-      money: 0
+      money: 0,
     })
   }
 
+  continue = () => {
+    this.getData();
+  }
+
   ///Сохранения
-  storeData = async (mon) => {
+  storeDataNum = async (mon) => {
     try {
       await AsyncStorage.setItem('money', mon)
     } catch (e) {
       // saving error
     }
   }
-  // storeData = async (value) => {
-  //   try {
-  //     const jsonValue = JSON.stringify(value)
-  //     await AsyncStorage.setItem('@storage_Key', jsonValue)
-  //   } catch (e) {
-  //     // saving error
-  //   }
-  // }
+
+  storeDataObj = async (mas, name) => {
+    try {
+      const jsonValue = JSON.stringify(mas)
+      await AsyncStorage.setItem(name, jsonValue)
+    } catch (e) {
+      // saving error
+    }
+  }
 
   //
 
   getData = async () => {
     try {
       const value = await AsyncStorage.getItem('money')
-      console.log(value);
+      const jsonBuff = await AsyncStorage.getItem('masBuff')
+      const jsonAuto = await AsyncStorage.getItem('auto_click') 
+
+      // console.log(value);
       if(value !== null) {
         this.setState({
           money: value,
+          masBuff: JSON.parse(jsonBuff),
+          auto_click: JSON.parse(jsonAuto)
         })
         // value previously stored
       }
@@ -204,11 +213,12 @@ export default class App extends PureComponent {
   // Update
 
   start_empty = () => {
-    let masBuff = [], masCooler = [], masEnergy = [], masPlace = [], masRoom = [];
+    let masBuff = [], masCooler = [], masEnergy = [], masPlace = [];
     for (let i = 0; i < this.max_count_Buff; i++) {
       const empty = Object.assign({}, this.empty_Upgrade);
       masBuff.push(empty)
     }
+    this.storeDataObj(masBuff, 'masBuff')
     for (let i = 0; i < this.max_count_Cooler; i++) {
       const empty = Object.assign({}, this.empty_Upgrade);
       masCooler.push(empty)
@@ -239,11 +249,11 @@ export default class App extends PureComponent {
     const { money, payment, masBuff } = this.state;
     if (money >= price) {
       this.upgrade_VC[0].buy = false;
-      let mon = (+money - price).toFixed(1);
+      let mon = +((+money - price).toFixed(1));
       const auto = this.library_Buff.find(item => item.name == 'autoclick')
       const autoclick = Object.assign({}, auto);
 
-      let masEmpty = [];
+      let masEmpty = [], mas = [], auto_click = { can: true, time: time };
 
       const newMas = masBuff.filter(item => item.name != 'empty')
 
@@ -253,12 +263,15 @@ export default class App extends PureComponent {
           masEmpty.push(empty);
         }
       }
-      this.storeData(mon);
+      mas = [...newMas, autoclick, ...masEmpty]
+      this.storeDataNum(mon);
+      this.storeDataObj(mas, 'masBuff');
+      this.storeDataObj(auto_click, 'auto_click')
       this.setState({
-        masBuff: [...newMas, autoclick, ...masEmpty],
+        masBuff: mas,
         money: mon,
         payment: +payment + price * this.upgrade_VC[0].coef,
-        auto_click: { can: true, time: time },
+        auto_click: auto_click,
       })
     }
     else if (money < price) {
@@ -269,7 +282,7 @@ export default class App extends PureComponent {
   pluce_voltage_VC = (count, price, name, img) => {
     const { money, payment, masEnergy } = this.state;
     if (money >= price && this.count_Energy < this.max_count_Energy) {
-      let mon = (+money - price).toFixed(1);
+      let mon = +((+money - price).toFixed(1));
       this.count_Energy += 1;
       let masEmpty = [];
 
@@ -281,10 +294,10 @@ export default class App extends PureComponent {
           masEmpty.push(empty);
         }
       }
-      this.storeData(mon)
+      this.storeDataNum(mon);
       this.setState({
         money: mon,
-        masEnergy: [...newMas, {name: name, properti: count, img: img}, ...masEmpty],
+        masEnergy: [...newMas, {name: name, properties: count, img: img}, ...masEmpty],
         payment: +payment + price * this.upgrade_VC[1].coef,
         max_voltage_VC: this.state.max_voltage_VC + count
       })
@@ -303,7 +316,7 @@ export default class App extends PureComponent {
 
     const newMasClick = [...masClick, emptyClick]
     if (money >= price && this.count_Place < this.max_count_Place) {
-      let mon = (+money - price).toFixed(1);
+      let mon = +((+money - price).toFixed(1));
       this.max_count_VC += count
       this.count_Place += 1
 
@@ -317,11 +330,11 @@ export default class App extends PureComponent {
           masEmpty.push(empty);
         }
       }
-      this.storeData(mon)
+      this.storeDataNum(mon);
       this.setState({
         money: mon,
         masClick: newMasClick,
-        masPlace: [...newMas, {name: name, properti: count, img: img}, ...masEmpty],
+        masPlace: [...newMas, {name: name, properties: count, img: img}, ...masEmpty],
         payment: +payment + price * this.upgrade_VC[2].coef,
       })
     }
@@ -336,7 +349,7 @@ export default class App extends PureComponent {
   plus_chilling = (count, price, name, img) => {
     const { money, voltage_VC, masCooler } = this.state;
     if (money >= price && this.count_Cooler < this.max_count_Cooler) {
-      let mon = (+money - price).toFixed(1);
+      let mon = +((+money - price).toFixed(1));
       this.count_Cooler += 1;
       let masEmpty = [];
 
@@ -348,10 +361,10 @@ export default class App extends PureComponent {
           masEmpty.push(empty);
         }
       }
-      this.storeData(mon)
+      this.storeDataNum(mon);
       this.setState({
         money: mon,
-        masCooler: [...newMas, { name: name, properti: count / 100, img: img}, ...masEmpty],
+        masCooler: [...newMas, { name: name, properties: count / 100, img: img}, ...masEmpty],
         voltage_VC: voltage_VC + this.upgrade_VC[3].coef,
       })
     }
@@ -370,14 +383,14 @@ export default class App extends PureComponent {
     const { money, max_temp_VC } = this.state;
     let mon, minus;
     if (temperature <= max_temp_VC) {
-      mon = (+money + plus).toFixed(1);
+      mon = +((+money + plus).toFixed(1));
     }
     else {
       minus = 1 - ((temperature / max_temp_VC) - 1) * this.fine_temp;
-      mon = (+money + plus * minus).toFixed(1)
+      mon = +((+money + plus * minus).toFixed(1))
     }
 
-    this.storeData(mon)
+    this.storeDataNum(mon);
     this.setState({
       money: mon,
     })
@@ -431,7 +444,7 @@ export default class App extends PureComponent {
       }
     }
     this.count_VC += 1;
-    this.storeData(mon)
+    this.storeDataNum(mon);
     this.setState({
       masClick: [...newMasClick, newClick, ...masEmpty],
       money: mon,
@@ -562,6 +575,9 @@ export default class App extends PureComponent {
           <TouchableOpacity onPress={this.new_game} style={[{ borderWidth: 1, borderColor: 'black', width: 20, height: 20 }]}>
             <Text>N</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={this.continue} style={[{ borderWidth: 1, borderColor: 'black', width: 20, height: 20 }]}>
+            <Text>C</Text>
+          </TouchableOpacity>
           <Text style={{ fontSize: 30 }}>MINER VIDEOCARD</Text>
         </View>
         <Alert
@@ -642,7 +658,7 @@ const GamePlace = ({
                 })
               }
             </View>
-            <View style={[{ alignItems: 'center' }]}>
+            <View >
               <TouchableOpacity activeOpacity={0.6} onPress={() => { onSwitch('Equipment') }} style={styles.Equipment}>
                 <Text style={[{ textAlign: "center", fontSize: 26 }]}>Оснащение</Text>
               </TouchableOpacity>
@@ -754,7 +770,7 @@ const styles = StyleSheet.create({
     width: "100%"
   },
   Equipment: {
-    width: 161,
+    width: 156,
     height: 52,
     justifyContent: "center",
     borderColor: 'black',
