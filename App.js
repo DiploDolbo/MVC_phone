@@ -75,7 +75,7 @@ export default class App extends PureComponent {
   }
 
   state = {
-    money: 0,
+    money: 160,
     spentWatts: 0,
     day: 0,
     count: 0,
@@ -111,11 +111,11 @@ export default class App extends PureComponent {
   }
 
   componentDidMount() {
-    this.add_click({ text: 'GT730', price: 0 })
-    this.pluce_voltage_VC(220, 0, 'BP', BP_img)
-
+    // this.add_click({ text: 'GT730', price: 0,  })
+    // this.pluce_voltage_VC(220, 0, 'BP', BP_img)
     // for(let i = 1; i < this.state.max_count_VC; i++) setTimeout(() => {this.add_click({text: 'empty', price: 0})}, 10)
     // this.add_click({text: 'empty', price: 0})
+    this.new_game()
     this.paymentInterval = setInterval(this.paymentTime, this.time_payment * 1000)
     this.spentWattsInterval = setInterval(this.spentWattsFunction, 2400)
   }
@@ -127,9 +127,11 @@ export default class App extends PureComponent {
   }
 
   new_game = () =>{
-    this.start_empty()
+    this.start_empty();
+    this.count_VC = 0;
+    // setTimeout(() => this.add_click({ text: 'GT730', price: 0, newGame: true }), 10)
     this.setState({
-      money: 0,
+      money: 160,
     })
   }
 
@@ -138,9 +140,9 @@ export default class App extends PureComponent {
   }
 
   ///Сохранения
-  storeDataNum = async (mon) => {
+  storeDataNum = async (num, name) => {
     try {
-      await AsyncStorage.setItem('money', mon)
+      await AsyncStorage.setItem(name, num)
     } catch (e) {
       // saving error
     }
@@ -155,20 +157,38 @@ export default class App extends PureComponent {
     }
   }
 
+  clearStoreData = async () => {
+    try {
+      await AsyncStorage.multiRemove()
+    } catch (e) {
+      
+    }
+  }
+
   //
 
   getData = async () => {
     try {
-      const value = await AsyncStorage.getItem('money')
-      const jsonBuff = await AsyncStorage.getItem('masBuff')
-      const jsonAuto = await AsyncStorage.getItem('auto_click') 
+      const value = await AsyncStorage.getItem('money');
+      const count_VC = await AsyncStorage.getItem('count_VC');
+      const jsonAuto = await AsyncStorage.getItem('auto_click');
+      const jsonClick = await AsyncStorage.getItem('masClick');
+      const jsonBuff = await AsyncStorage.getItem('masBuff');
+      const jsonCooler = await AsyncStorage.getItem('masCooler');
+      const jsonEnergy = await AsyncStorage.getItem('masEnergy');
+      const jsonPlace = await AsyncStorage.getItem('masPlace');
 
       // console.log(value);
-      if(value !== null) {
+      if(value && jsonBuff && jsonAuto && jsonClick) {
+        this.count_VC = count_VC
         this.setState({
           money: value,
+          auto_click: JSON.parse(jsonAuto),
+          masClick: JSON.parse(jsonClick),
           masBuff: JSON.parse(jsonBuff),
-          auto_click: JSON.parse(jsonAuto)
+          masCooler: JSON.parse(jsonCooler),
+          masEnergy: JSON.parse(jsonEnergy),
+          masPlace: JSON.parse(jsonPlace)
         })
         // value previously stored
       }
@@ -190,8 +210,9 @@ export default class App extends PureComponent {
   paymentTime = () => {
     const { money, payment, spentWatts } = this.state;
     let pay = spentWatts + payment;
-    let mon = (+money - pay).toFixed(1);
+    let mon = +((+money - pay).toFixed(1));
     this.onAlert(`ПЛАТИ НАЛОГИ ${pay}!`)
+    this.storeDataNum(mon)
     this.setState({
       money: mon,
       spentWatts: 0,
@@ -213,34 +234,28 @@ export default class App extends PureComponent {
   // Update
 
   start_empty = () => {
-    let masBuff = [], masCooler = [], masEnergy = [], masPlace = [];
-    for (let i = 0; i < this.max_count_Buff; i++) {
-      const empty = Object.assign({}, this.empty_Upgrade);
-      masBuff.push(empty)
-    }
-    this.storeDataObj(masBuff, 'masBuff')
-    for (let i = 0; i < this.max_count_Cooler; i++) {
-      const empty = Object.assign({}, this.empty_Upgrade);
-      masCooler.push(empty)
-    }
-    for (let i = 0; i < this.max_count_Energy; i++) {
-      const empty = Object.assign({}, this.empty_Upgrade);
-      masEnergy.push(empty)
-    }
-    for (let i = 0; i < this.max_count_Place; i++) {
-      const empty = Object.assign({}, this.empty_Upgrade);
-      masPlace.push(empty)
-    }
+    let masClick = [], masBuff = [], masCooler = [], masEnergy = [], masPlace = [];
+    const empty = Object.assign({}, this.empty_Upgrade);
+    const click = Object.assign({}, this.empty_VC)
+    for(let i = 0; i < this.max_count_VC; i++) {masClick.push(click)}
+    for (let i = 0; i < this.max_count_Buff; i++) {masBuff.push(empty)}
+    for (let i = 0; i < this.max_count_Cooler; i++) {masCooler.push(empty)}
+    for (let i = 0; i < this.max_count_Energy; i++) {masEnergy.push(empty)}
+    for (let i = 0; i < this.max_count_Place; i++) {masPlace.push(empty)}
+
+    // this.storeDataObj(masBuff, 'masBuff')
     // for (let i = 1; i < this.max_count_Room; i++) {
     //   const empty = Object.assign({}, this.empty_Upgrade);
     //   masRoom.push(empty)
     // }
 
     this.setState({
+      masClick: masClick,
       masBuff: masBuff,
       masCooler: masCooler,
       masEnergy: masEnergy,
       masPlace: masPlace,
+      auto_click: { can: false, time: 0 },
       // masRoom: masRoom
     })
   }
@@ -255,16 +270,16 @@ export default class App extends PureComponent {
 
       let masEmpty = [], mas = [], auto_click = { can: true, time: time };
 
-      const newMas = masBuff.filter(item => item.name != 'empty')
+      const oldMas = masBuff.filter(item => item.name != 'empty')
 
-      if (newMas.length + 1 < this.max_count_Buff) {
-        for (let i = newMas.length + 1; i < this.max_count_Buff; i++) {
+      if (oldMas.length + 1 < this.max_count_Buff) {
+        for (let i = oldMas.length + 1; i < this.max_count_Buff; i++) {
           const empty = Object.assign({}, this.empty_Upgrade);
           masEmpty.push(empty);
         }
       }
-      mas = [...newMas, autoclick, ...masEmpty]
-      this.storeDataNum(mon);
+      mas = [...oldMas, autoclick, ...masEmpty]
+      this.storeDataNum(mon, 'money');
       this.storeDataObj(mas, 'masBuff');
       this.storeDataObj(auto_click, 'auto_click')
       this.setState({
@@ -286,18 +301,20 @@ export default class App extends PureComponent {
       this.count_Energy += 1;
       let masEmpty = [];
 
-      const newMas = masEnergy.filter(item => item.name != 'empty')
+      const oldMas = masEnergy.filter(item => item.name != 'empty')
 
-      if (newMas.length + 1 < this.max_count_Energy) {
-        for (let i = newMas.length + 1; i < this.max_count_Energy; i++) {
+      if (oldMas.length + 1 < this.max_count_Energy) {
+        for (let i = oldMas.length + 1; i < this.max_count_Energy; i++) {
           const empty = Object.assign({}, this.empty_Upgrade);
           masEmpty.push(empty);
         }
       }
-      this.storeDataNum(mon);
+      const newMas = [...oldMas, {name: name, properties: count, img: img}, ...masEmpty]
+      this.storeDataNum(mon, 'money');
+      this.storeDataObj(newMas, 'masEnergy')
       this.setState({
         money: mon,
-        masEnergy: [...newMas, {name: name, properties: count, img: img}, ...masEmpty],
+        masEnergy: newMas,
         payment: +payment + price * this.upgrade_VC[1].coef,
         max_voltage_VC: this.state.max_voltage_VC + count
       })
@@ -322,19 +339,22 @@ export default class App extends PureComponent {
 
       let masEmpty = [];
 
-      const newMas = masPlace.filter(item => item.name != 'empty')
+      const oldMas = masPlace.filter(item => item.name != 'empty')
 
-      if (newMas.length + 1 < this.max_count_Place) {
-        for (let i = newMas.length + 1; i < this.max_count_Place; i++) {
+      if (oldMas.length + 1 < this.max_count_Place) {
+        for (let i = oldMas.length + 1; i < this.max_count_Place; i++) {
           const empty = Object.assign({}, this.empty_Upgrade);
           masEmpty.push(empty);
         }
       }
-      this.storeDataNum(mon);
+      const newMas = [...oldMas, {name: name, properties: count, img: img}, ...masEmpty]
+      this.storeDataNum(mon, 'money');
+      this.storeDataObj(newMas, 'masPlace');
+      this.storeDataObj(newMasClick, 'masClick')
       this.setState({
         money: mon,
         masClick: newMasClick,
-        masPlace: [...newMas, {name: name, properties: count, img: img}, ...masEmpty],
+        masPlace: newMas,
         payment: +payment + price * this.upgrade_VC[2].coef,
       })
     }
@@ -353,18 +373,20 @@ export default class App extends PureComponent {
       this.count_Cooler += 1;
       let masEmpty = [];
 
-      const newMas = masCooler.filter(item => item.name != 'empty')
+      const oldMas = masCooler.filter(item => item.name != 'empty')
 
-      if (newMas.length + 1 < this.max_count_Cooler) {
-        for (let i = newMas.length + 1; i < this.max_count_Cooler; i++) {
+      if (oldMas.length + 1 < this.max_count_Cooler) {
+        for (let i = oldMas.length + 1; i < this.max_count_Cooler; i++) {
           const empty = Object.assign({}, this.empty_Upgrade);
           masEmpty.push(empty);
         }
       }
-      this.storeDataNum(mon);
+      const newMas = [...oldMas, { name: name, properties: count / 100, img: img}, ...masEmpty]
+      this.storeDataNum(mon, 'money');
+      this.storeDataObj(newMas, 'masCooler')
       this.setState({
         money: mon,
-        masCooler: [...newMas, { name: name, properties: count / 100, img: img}, ...masEmpty],
+        masCooler: newMas,
         voltage_VC: voltage_VC + this.upgrade_VC[3].coef,
       })
     }
@@ -424,37 +446,41 @@ export default class App extends PureComponent {
     })
   }
 
-  add_click = ({ text, price }) => {
-    const { masClick, money, voltage_VC } = this.state;
+  add_click = ({ text, price, newGame }) => {
+    const { masClick, money} = this.state;
     const indexClick = this.library_VC.findIndex(item => item.text === text)
     const nClick = this.library_VC.slice(indexClick, indexClick + 1);
     const newClick = Object.assign({}, nClick[0]);
     let masEmpty = [];
 
-    const newMasClick = masClick.filter(item => item.text != 'empty')
+    const oldMasClick = masClick.filter(item => item.text != 'empty')
 
     this.count_buy_VC++;
     newClick.working = false;
     newClick.id = this.count_buy_VC;
-    let mon = (+money - price).toFixed(1)
-    if (newMasClick.length + 1 < this.max_count_VC) {
-      for (let i = newMasClick.length + 1; i < this.max_count_VC; i++) {
+    let mon = +((+money - price).toFixed(1))
+    if (oldMasClick.length + 1 < this.max_count_VC) {
+      for (let i = oldMasClick.length + 1; i < this.max_count_VC; i++) {
         const emptyClick = Object.assign({}, this.empty_VC);
         masEmpty.push(emptyClick);
       }
     }
+    const newMas = [...oldMasClick, newClick, ...masEmpty]
     this.count_VC += 1;
-    this.storeDataNum(mon);
+    if(!newGame){
+      this.storeDataNum(mon, 'money');
+      this.storeDataNum(this.count_VC, 'count_VC')
+      this.storeDataObj(newMas, 'masClick')
+    }
     this.setState({
-      masClick: [...newMasClick, newClick, ...masEmpty],
+      masClick: newMas,
       money: mon,
-      voltage_VC: voltage_VC + newClick.voltage,
     })
   }
 
   buy_click = ({ text, price }) => {
     const { money } = this.state;
-    if (money >= price && this.count_VC < this.max_count_VC) { this.add_click({ text, price }) }
+    if (money >= price && this.count_VC < this.max_count_VC) { this.add_click({ text, price, newGame: false}) }
     else if (money < price) {
       this.onAlert('Не хватает')
     }
@@ -486,7 +512,8 @@ export default class App extends PureComponent {
       t = this.state.temp_VC;
     };
     this.count_VC -= 1;
-    this.storeData(mon);
+    this.storeDataNum(mon, 'money');
+    this.storeDataNum(this.count_VC, 'count_VC')
     this.setState({
       money: mon,
       masClick: newMasClick,

@@ -97,7 +97,7 @@ class Click extends PureComponent {
     super(props)
     this.time_auto_click = 0;
     this.time_interval_cooldown = 0;
-    this.VC_on = true;
+    this.VC_on = false;
   }
 
   state = {
