@@ -141,7 +141,7 @@ export default class App extends PureComponent {
 
   ///Сохранения
   storeDataNum = async (num, name) => {
-    try { 
+    try {
       await AsyncStorage.setItem(name, num)
     } catch (e) {
       // saving error
