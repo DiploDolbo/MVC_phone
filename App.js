@@ -10,7 +10,7 @@ import Frame from './src/components/tab/create_frame';
 
 import autoclick_img from './src/img/autoclick.png';
 import room1 from './src/img/home_img/home_lvl1.png';
-import BP_img from './src/img/bp.png';
+// import BP_img from './src/img/bp.png';
 
 export default class App extends PureComponent {
 
@@ -30,6 +30,7 @@ export default class App extends PureComponent {
     this.max_count_Place = 3;
     this.count_Room = 1;
     this.max_count_Room = 3;
+    this.payment = 0
     this.count_buy_VC = 0;//количество за всё время купленых видюх
     // this.nowork_temp = 0.2;//коэф неработающей VC 
     this.fine_temp = 4;//коэф за перегрев
@@ -78,8 +79,6 @@ export default class App extends PureComponent {
     money: 160,
     spentWatts: 0,
     day: 0,
-    count: 0,
-    payment: 0,
     voltage_VC: 0,
     max_voltage_VC: 0,
     temp_VC: 30,
@@ -116,10 +115,11 @@ export default class App extends PureComponent {
     // for(let i = 1; i < this.state.max_count_VC; i++) setTimeout(() => {this.add_click({text: 'empty', price: 0})}, 10)
     // this.add_click({text: 'empty', price: 0})
     this.new_game()
-    this.paymentInterval = setInterval(this.paymentTime, this.time_payment * 1000)
+    // this.paymentInterval = setInterval(this.paymentTime, this.time_payment * 1000)
     this.spentWattsInterval = setInterval(this.spentWattsFunction, 2400)
   }
 
+  //Тестовые кнопки
   give_test_money = () => {
     this.setState({
       money: 5000
@@ -129,6 +129,13 @@ export default class App extends PureComponent {
   new_game = () =>{
     this.start_empty();
     this.count_VC = 0;
+    this.payment = 0;
+    this.count_Cooler = 0;
+    this.count_Energy = 0;
+    this.count_Place = 0;
+    this.count_Buff = 0;
+    this.max_count_VC = 0;
+    this.count_buy_VC = 0;
     // setTimeout(() => this.add_click({ text: 'GT730', price: 0, newGame: true }), 10)
     this.setState({
       money: 160,
@@ -137,6 +144,15 @@ export default class App extends PureComponent {
 
   continue = () => {
     this.getData();
+  }
+
+  clearStoreData = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      await AsyncStorage.multiRemove(keys)
+    } catch (e) {
+      
+    }
   }
 
   ///Сохранения
@@ -153,25 +169,27 @@ export default class App extends PureComponent {
       const jsonValue = JSON.stringify(mas)
       await AsyncStorage.setItem(name, jsonValue)
     } catch (e) {
+      
       // saving error
     }
   }
 
-  clearStoreData = async () => {
-    try {
-      await AsyncStorage.multiRemove()
-    } catch (e) {
-      
-    }
-  }
+
 
   //
 
   getData = async () => {
     try {
-      const value = await AsyncStorage.getItem('money');
-      const count_VC = await AsyncStorage.getItem('count_VC');
-      const jsonAuto = await AsyncStorage.getItem('auto_click');
+      const money = await AsyncStorage.getItem('money');
+      const payment = await AsyncStorage.getItem('payment');
+      const count_VC = await AsyncStorage.getItem('count_VC') ;
+      const count_Cooler = await AsyncStorage.getItem('count_Cooler');
+      const count_Energy = await AsyncStorage.getItem('count_Energy');
+      const count_Place = await AsyncStorage.getItem('count_Place');
+      const max_count_VC = await AsyncStorage.getItem('max_count_VC');
+      const count_buy_VC = await AsyncStorage.getItem('count_buy_VC')
+
+      const jsonAuto = await AsyncStorage.getItem('auto_click') ;
       const jsonClick = await AsyncStorage.getItem('masClick');
       const jsonBuff = await AsyncStorage.getItem('masBuff');
       const jsonCooler = await AsyncStorage.getItem('masCooler');
@@ -179,16 +197,25 @@ export default class App extends PureComponent {
       const jsonPlace = await AsyncStorage.getItem('masPlace');
 
       // console.log(value);
-      if(value && jsonBuff && jsonAuto && jsonClick) {
-        this.count_VC = count_VC
+      // if(money && payment && jsonBuff && jsonAuto && jsonClick
+      //   && jsonBuff && jsonCooler && jsonEnergy && jsonPlace) {
+      if(money){
+        this.count_VC = count_VC || this.count_VC;
+        this.payment = payment || this.payment;
+        this.count_Cooler = count_Cooler || this.count_Cooler;
+        this.count_Energy = count_Energy || this.count_Energy;
+        this.count_Place = count_Place || this.count_Place;
+        this.max_count_VC = max_count_VC || this.max_count_VC;
+        this.count_buy_VC = count_buy_VC || this.count_buy_VC;
+
         this.setState({
-          money: value,
-          auto_click: JSON.parse(jsonAuto),
-          masClick: JSON.parse(jsonClick),
-          masBuff: JSON.parse(jsonBuff),
-          masCooler: JSON.parse(jsonCooler),
-          masEnergy: JSON.parse(jsonEnergy),
-          masPlace: JSON.parse(jsonPlace)
+          money: money || this.state.money,
+          auto_click: JSON.parse(jsonAuto) || this.state.auto_click,
+          masClick: JSON.parse(jsonClick) || this.state.masClick,
+          masBuff: JSON.parse(jsonBuff) || this.state.masBuff,
+          masCooler: JSON.parse(jsonCooler) || this.state.masCooler,
+          masEnergy: JSON.parse(jsonEnergy) || this.state.masEnergy,
+          masPlace: JSON.parse(jsonPlace) || this.state.masPlace
         })
         // value previously stored
       }
@@ -207,25 +234,35 @@ export default class App extends PureComponent {
   // }
   ///
 
-  paymentTime = () => {
-    const { money, payment, spentWatts } = this.state;
-    let pay = spentWatts + payment;
-    let mon = +((+money - pay).toFixed(1));
-    this.onAlert(`ПЛАТИ НАЛОГИ ${pay}!`)
-    this.storeDataNum(mon)
-    this.setState({
-      money: mon,
-      spentWatts: 0,
-      day: 0
-    })
-  }
+  // paymentTime = () => {
+  //   const { money, spentWatts } = this.state;
+    
+  //   this.setState({
+  //     money: mon,
+  //     spentWatts: 0,
+  //     day: 0
+  //   })
+  // }
 
   spentWattsFunction = () => {
-    const { spentWatts, voltage_VC, day } = this.state;
-    let pay = +(spentWatts + voltage_VC * this.coef_watts).toFixed(1)
-    let d = day + 1;
+    const { spentWatts, voltage_VC, day, money } = this.state;
+    let pay, mon, d;
+    if(day == 30){
+      pay = spentWatts + this.payment;
+      mon = +((+money - pay).toFixed(1));
+      this.onAlert(`ПЛАТИ НАЛОГИ ${pay}!`)
+      this.storeDataNum(mon, 'money')
+      d = 0;
+    }
+    else{
+      pay = +(spentWatts + voltage_VC * this.coef_watts).toFixed(1);
+      mon = money
+      d = day + 1;
+    }
+    
     this.setState({
       spentWatts: pay,
+      money: mon,
       day: d
     })
 
@@ -261,7 +298,7 @@ export default class App extends PureComponent {
   }
 
   autoClick = (time, price) => {
-    const { money, payment, masBuff } = this.state;
+    const { money, masBuff } = this.state;
     if (money >= price) {
       this.upgrade_VC[0].buy = false;
       let mon = +((+money - price).toFixed(1));
@@ -278,14 +315,15 @@ export default class App extends PureComponent {
           masEmpty.push(empty);
         }
       }
+      this.payment +=  +price * this.upgrade_VC[0].coef
       mas = [...oldMas, autoclick, ...masEmpty]
       this.storeDataNum(mon, 'money');
+      this.storeDataNum(this.payment, 'payment')
       this.storeDataObj(mas, 'masBuff');
       this.storeDataObj(auto_click, 'auto_click')
       this.setState({
         masBuff: mas,
         money: mon,
-        payment: +payment + price * this.upgrade_VC[0].coef,
         auto_click: auto_click,
       })
     }
@@ -295,7 +333,7 @@ export default class App extends PureComponent {
   }
 
   pluce_voltage_VC = (count, price, name, img) => {
-    const { money, payment, masEnergy } = this.state;
+    const { money, masEnergy } = this.state;
     if (money >= price && this.count_Energy < this.max_count_Energy) {
       let mon = +((+money - price).toFixed(1));
       this.count_Energy += 1;
@@ -311,11 +349,11 @@ export default class App extends PureComponent {
       }
       const newMas = [...oldMas, {name: name, properties: count, img: img}, ...masEmpty]
       this.storeDataNum(mon, 'money');
+      this.storeDataNum(this.count_Energy, 'count_Energy')
       this.storeDataObj(newMas, 'masEnergy')
       this.setState({
         money: mon,
         masEnergy: newMas,
-        payment: +payment + price * this.upgrade_VC[1].coef,
         max_voltage_VC: this.state.max_voltage_VC + count
       })
     }
@@ -328,16 +366,16 @@ export default class App extends PureComponent {
   }
 
   plus_count_VC = (count, price, name, img) => {
-    const { money, payment, masClick, masPlace } = this.state;
-    const emptyClick = Object.assign({}, this.empty_VC);
-
-    const newMasClick = [...masClick, emptyClick]
+    const { money, masClick, masPlace } = this.state;
     if (money >= price && this.count_Place < this.max_count_Place) {
       let mon = +((+money - price).toFixed(1));
       this.max_count_VC += count
       this.count_Place += 1
 
       let masEmpty = [];
+
+      const emptyClick = Object.assign({}, this.empty_VC);
+      const newMasClick = [...masClick, emptyClick]
 
       const oldMas = masPlace.filter(item => item.name != 'empty')
 
@@ -349,13 +387,14 @@ export default class App extends PureComponent {
       }
       const newMas = [...oldMas, {name: name, properties: count, img: img}, ...masEmpty]
       this.storeDataNum(mon, 'money');
+      this.storeDataNum(this.count_Place, 'count_Place')
+      this.storeDataNum(this.max_count_VC, 'max_count_VC')
       this.storeDataObj(newMas, 'masPlace');
       this.storeDataObj(newMasClick, 'masClick')
       this.setState({
         money: mon,
         masClick: newMasClick,
-        masPlace: newMas,
-        payment: +payment + price * this.upgrade_VC[2].coef,
+        masPlace: newMas
       })
     }
     else if (money < price) {
@@ -383,6 +422,7 @@ export default class App extends PureComponent {
       }
       const newMas = [...oldMas, { name: name, properties: count / 100, img: img}, ...masEmpty]
       this.storeDataNum(mon, 'money');
+      this.storeDataNum(this.count_Cooler, 'count_Cooler')
       this.storeDataObj(newMas, 'masCooler')
       this.setState({
         money: mon,
@@ -604,6 +644,9 @@ export default class App extends PureComponent {
           </TouchableOpacity>
           <TouchableOpacity onPress={this.continue} style={[{ borderWidth: 1, borderColor: 'black', width: 20, height: 20 }]}>
             <Text>C</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.clearStoreData} style={[{ borderWidth: 1, borderColor: 'black', width: 20, height: 20 }]}>
+            <Text>D</Text>
           </TouchableOpacity>
           <Text style={{ fontSize: 30 }}>MINER VIDEOCARD</Text>
         </View>
